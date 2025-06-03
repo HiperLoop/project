@@ -76,3 +76,14 @@ def solve_velocities(bodies, dt, sim_duration=10000):
     t_eval = np.linspace(t_span[0], t_span[1], sim_duration)
     result = solve_ivp(equations_of_motion, t_span, initial_conditions,t_eval=t_eval, vectorized=True)
     return result
+
+test_earth = Body("Earth", 1, 0.01657388137, [0, 0], [0, 0])
+test_earth2 = Body("Earth2", 5.972e24, 6371e3, [100000], [0])
+test_moon = Body("Moon", 0.01230408573, 0.00451873048, [1, 0], [0, 2.65868887e-7])
+
+earth = Body("Earth", 5.972e24, 6371e3, [0, 0, 0], [0, 0, 0])
+earth2 = Body("Earth2", 5.972e24, 6371e3, [100000, 0, 0], [0, 0, 0])
+moon = Body("Moon", 7.348e22, 1737e3, [384400e3, 0, 0], [0, 1022, 0])
+
+bodies = [test_earth, test_moon]
+#bodies = [earth, moon]
