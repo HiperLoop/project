@@ -44,3 +44,10 @@ def forces(bodies):
                 forces[j] -= relative_force(body1, body2)
     print("Forces calculated:", forces)
     return forces
+
+def accelerations(bodies):
+    accelerations = forces(bodies)
+    for i, body in enumerate(bodies):
+        accelerations[i] /= body.mass
+    print("Accelerations calculated:", accelerations)
+    return accelerations
