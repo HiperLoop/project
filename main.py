@@ -3,6 +3,8 @@ from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+#heheh
+
 class Body:
     """Class representing a celestial body with mass, radius, position, and velocity."""
 
