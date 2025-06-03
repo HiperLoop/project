@@ -16,3 +16,7 @@ class Body:
 
     def __repr__(self):
         return f"Body(name={self.name}, mass={self.mass}, radius={self.radius}, position={self.position}, velocity={self.velocity})"
+    
+    def relative_position(body1, body2):
+        """Calculate the relative position vector from body1 to body2."""
+        return body2.position - body1.position
