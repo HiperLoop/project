@@ -51,3 +51,28 @@ def accelerations(bodies):
         accelerations[i] /= body.mass
     print("Accelerations calculated:", accelerations)
     return accelerations
+
+def solve_velocities(bodies, dt, sim_duration=10000):
+    """"Use scipy's solve_ivp to evolve the velocities of the bodies."""
+    def equations_of_motion(t, y):
+        d = bodies[0].dimension
+        positions = y[:len(bodies) * d].reshape((len(bodies), d))
+        velocities = y[len(bodies) * d:].reshape((len(bodies), d))
+        
+        # Update positions
+        for i, body in enumerate(bodies):
+            body.position = positions[i]
+            body.velocity = velocities[i]
+        
+        # Calculate accelerations
+        accs = accelerations(bodies)
+        
+        # Return derivatives
+        dydt = np.concatenate((velocities.flatten(), accs.flatten()))
+        return dydt
+    
+    initial_conditions = np.concatenate([body.position for body in bodies] + [body.velocity for body in bodies])
+    t_span = (0, dt)
+    t_eval = np.linspace(t_span[0], t_span[1], sim_duration)
+    result = solve_ivp(equations_of_motion, t_span, initial_conditions,t_eval=t_eval, vectorized=True)
+    return result
