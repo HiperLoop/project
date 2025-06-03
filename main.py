@@ -34,3 +34,13 @@ def relative_force(body1, body2):
     force_magnitude = G * body1.mass * body2.mass / distance**2
     force_vector = (force_magnitude / distance) * r_vector
     return force_vector
+
+def forces(bodies):
+    forces = np.zeros((len(bodies), bodies[0].dimension))
+    for i, body1 in enumerate(bodies):
+        for j, body2 in enumerate(bodies):
+            if i < j:
+                forces[i] += relative_force(body1, body2)
+                forces[j] -= relative_force(body1, body2)
+    print("Forces calculated:", forces)
+    return forces
