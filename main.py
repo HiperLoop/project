@@ -113,28 +113,33 @@ fig, ax = plt.subplots()
 
 scat = ax.scatter(0, 0, c="r", s=5, label=f'moon')
 scat2 = ax.scatter(0, 0, c="b", s=5, label=f'earth')
+line = ax.plot(0, 0, c="k", alpha=0.2, label=f'moon_orbit')
 ax.set(xlim=[-2, 2], ylim=[-2, 2], xlabel='X', ylabel='Y')
 ax.legend()
 
-continuous_evolve = [0]
-continuous_evolve = solve_velocities(bodies, 0, 0.001, sim_duration=1000).y
+all_evolves = []
 def update(frame):
     continuous_evolve = solve_velocities(bodies, 0, 0.001, sim_duration=1000).y
+    all_evolves += (continuous_evolve)
     # for each frame, update the data stored on each artist.
     x = continuous_evolve[2][::1000]
     y = continuous_evolve[3][::1000]
     # update the scatter plot:
     data = np.stack([x, y]).T
     scat.set_offsets(data)
-    # update the line plot:
     # for each frame, update the data stored on each artist.
     x2 = continuous_evolve[0][::1000]
     y2 = continuous_evolve[1][::1000]
     # update the scatter plot:
     data2 = np.stack([x2, y2]).T
     scat2.set_offsets(data2)
-    # update the line plot:
-    return (scat, scat2)
+    # for each frame, update the data stored on each artist.
+    x3 = all_evolves[2][::1000]
+    y3 = all_evolves[3][::1000]
+    # update the scatter plot:
+    data3 = np.stack([x3, y3]).T
+    line.set_offsets(data3)
+    return (scat, scat2, line)
 
 
 ani = animation.FuncAnimation(fig=fig, func=update, frames=4000, interval=10)
