@@ -87,3 +87,24 @@ moon = Body("Moon", 7.348e22, 1737e3, [384400e3, 0, 0], [0, 1022, 0])
 
 bodies = [test_earth, test_moon]
 #bodies = [earth, moon]
+
+
+
+evolve = solve_velocities(bodies, 0.01, sim_duration=1000000)
+print("Evolution result:", evolve)
+print(evolve.y.shape)
+print("Final positions:", [body.position for body in bodies])
+
+plt.figure(figsize=(14, 7))
+for i in [0, 2]:
+    plt.subplot(1, 2, 1)
+    plt.plot(evolve.y[i], evolve.y[i+1], label='%s position' % bodies[(i%4)//2].name)
+    
+plt.legend()
+
+for i in [4, 6]:
+    plt.subplot(1, 2, 2)
+    plt.plot(evolve.y[i], evolve.y[i+1], label='%s velocity' % bodies[(i%4)//2].name)
+
+plt.legend()
+plt.show()
