@@ -226,7 +226,7 @@ def figure_eight_configureation():
     """Configure the simulation for the figure-eight configuration."""
     bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
     # Initialize the simulation
-    sim = Simulation(bodies, dimension=2, G=3, norming_distance=149, norming_velocity=29.8, norm=False, reverse=False, time_step=0.1)
+    sim = Simulation(bodies, dimension=2, G=3, norm=False, reverse=False, time_step=0.1)
     # Initialize the animation
     anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000, frame_rate=100)
 
@@ -246,7 +246,7 @@ def solar_system():
 def main():
     """Main function to run the simulation."""
     # Uncomment the desired simulation configuration
-    #figure_eight_configureation()
-    solar_system()
+    figure_eight_configureation()
+    #solar_system()
 
 main()
