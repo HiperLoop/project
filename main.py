@@ -23,8 +23,8 @@ def relative_position(body1, body2):
     """Calculate the relative position vector from body1 to body2."""
     return body2.position - body1.position
 
-def relative_force(body1, body2):
-    """Calculate the gravitational force exerted by body2 on body1."""
+def twoBody_acceleration(body1, body2):
+    """Calculate the accelaration fof body one towards body 2."""
     g = 6.67430e-11  # Gravitational constant in m^3 kg^-1 s^-2
     G = 1  # Modified gravitational constant
     r_vector = relative_position(body1, body2)
@@ -33,26 +33,19 @@ def relative_force(body1, body2):
     if distance == 0:
         return np.zeros(body1.dimension)  # No force if bodies are at the same position
     
-    force_magnitude = G * body1.mass * body2.mass / distance**2
-    force_vector = (force_magnitude / distance) * r_vector
-    return force_vector
+    accelration_magnitude = G * body2.mass / distance**2
+    accelration_vector = (accelration_magnitude / distance) * r_vector
+    return accelration_vector
 
-def forces(bodies):
-    forces = np.zeros((len(bodies), bodies[0].dimension))
+def accelerations(bodies):
+    accs = np.zeros((len(bodies), bodies[0].dimension))
     for i, body1 in enumerate(bodies):
         for j, body2 in enumerate(bodies):
             if i < j:
-                forces[i] += relative_force(body1, body2)
-                forces[j] -= relative_force(body1, body2)
+                accs[i] += twoBody_acceleration(body1, body2)
+                accs[j] += twoBody_acceleration(body2, body1)
     #print("Forces calculated:", forces)
-    return forces
-
-def accelerations(bodies):
-    accelerations = forces(bodies)
-    for i, body in enumerate(bodies):
-        accelerations[i] /= body.mass
-    #print("Accelerations calculated:", accelerations)
-    return accelerations
+    return accs
 
 def normMasses(bodies):
     """Normalize the masses of the bodies to a common scale."""
@@ -65,7 +58,11 @@ def normMasses(bodies):
 
 def centre_of_mass(bodies):
     """Calculate the center of mass of the system. DO nroming of masses beforehand!"""
-    COM_position = sum(body.mass * body.position for body in bodies)
+    COM_position = np.zeros(bodies[0].dimension)
+    for body in bodies:
+        COM_position += body.mass * body.position
+    #COM_position = np.add([body.mass * body.position] for body in bodies)
+    print("Center of mass position:", COM_position)
     return COM_position
 
 def relative_positions(bodies, COM_position):
@@ -91,8 +88,13 @@ def initial_norming(bodies):
     COM_velocity = COM_velocity(bodies)
     relative_velocities(bodies, COM_velocity)
 
+""" def solve_COM(bodies):
+    accs = accelerations(bodies)
+    def 
+ """
+
+
 def solve_velocities(bodies, start, dt, sim_duration=10000):
-    """"Use scipy's solve_ivp to evolve the velocities of the bodies."""
     def equations_of_motion(t, y):
         d = bodies[0].dimension
         positions = y[:len(bodies) * d].reshape((len(bodies), d))
@@ -114,6 +116,7 @@ def solve_velocities(bodies, start, dt, sim_duration=10000):
     t_span = (start, dt)
     result = solve_ivp(equations_of_motion, t_span, initial_conditions, vectorized=True)
     return result
+
 #mass of earth in variable x
 x = 5.972e24  # kg
 #mass of moon in variable y
@@ -121,14 +124,14 @@ y = 7.348e22  # kg
 test_earth = Body("Earth", 'green', x, 1, [1, 0], [0, 1])
 test_earth2 = Body("Earth2", 'green', 5.972e24, 6371e3, [100000], [0])
 test_moon = Body("Moon", 'blue', y, 1, [1.002569, 0], [0, 1.033])
-test_sun = Body("Sun", 'yellow', 1.989e30, 1, [0, 0], [0, 0])
+test_sun = Body("Sun", 'red', 1.989e25, 1, [0, 0], [0, 0])
 
 #earth = Body("Earth", 5.972e24, 6371e3, [0, 0, 0], [0, 0, 0])
 #earth2 = Body("Earth2", 5.972e24, 6371e3, [100000, 0, 0], [0, 0, 0])
 #moon = Body("Moon", 7.348e22, 1737e3, [384400e3, 0, 0], [0, 1022, 0])
 
-bodies = [test_earth, test_sun, test_moon]
-normMasses(bodies)
+bodies = [test_earth, test_sun]
+initial_norming(bodies)
 #bodies = [earth, moon]
 
 """ evolve = solve_velocities(bodies,0,  0.01, sim_duration=1000000)
@@ -157,6 +160,7 @@ def draw_body(body):
     return (scat, line)
 
 def update(frame):
+    #continuous_evolve = solve_COM(bodies).y
     continuous_evolve = solve_velocities(bodies, 0, 0.01, sim_duration=1000).y
     #print(continuous_evolve[2][-1], continuous_evolve[3][-1])
     #all_evolves += (continuous_evolve)
