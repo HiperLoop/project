@@ -2,6 +2,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import random
 
 class Body:
     """Class representing a celestial body with mass, radius, position, and velocity."""
@@ -81,15 +82,14 @@ def relative_velocities(bodies, COM_velocity):
 
 def norm_units(bodies):
     """Normalize the units of position and velocity for the bodies."""
-    AU = 1.496e11  # Astronomical Unit in meters
-    vel_Earth = 29780  # Earth's orbital velocity in m/s
+    AU = 149
+    vel_Earth = 29.8
     for body in bodies:
         body.position /= AU
         body.velocity /= vel_Earth
 
 def initial_norming(bodies):
     """Normalize the masses, calculate the center of mass position and velocity, and adjust bodies accordingly."""
-    norm_units(bodies)
     normMasses(bodies)
     COM_position = centre_of_mass(bodies)
     relative_positions(bodies, COM_position)
@@ -120,24 +120,46 @@ def solve_velocities(bodies, start, dt, sim_duration=10000):
     result = solve_ivp(equations_of_motion, t_span, initial_conditions, vectorized=True)
     return result
 
-#mass of earth in variable x
-x = 5.972e24  # kg
-#mass of moon in variable y
-y = 7.348e22  # kg
-test_earth = Body("Earth", 'green', x, 1, [1.0, 0], [0.0, 1])
-test_earth2 = Body("Earth2", 'green', 5.972e24, 6371e3, [100000], [0])
-test_moon = Body("Moon", 'blue', y, 1, [1.002569, 0], [0, 1.033])
-test_moon2 = Body("Moon", 'blue', y, 1, [-1.0, 0], [0, 1.033])
-test_sun = Body("Sun", 'red', 1.989e30, 1, [0.0, 0], [0.0, 0])
-test_mars = Body("Mars", 'orange', 6.4171e23, 1, [1.524, 0], [0, 0.81])
+def load_body_from_csv(filename):
+    """Load body data from a CSV file."""
+    text_bodies = np.genfromtxt(filename, delimiter=',', dtype=None, encoding=None)[1:]
+    bodies = []
+    for row in text_bodies:
+        name = row[0]
+        mass = row[1]
+        distance = row[8]
+        radius = float(row[2])/2
+        velocity = row[12]
+        colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+        body = Body(name, colour, float(mass), float(radius), [float(distance), float(0)], [float(0), float(velocity)])
+        bodies.append(body)
+        norm_units(bodies)
+    return bodies
 
-bodies = [test_earth, test_sun, test_mars]
+def load_body_from_custom_csv(filename):
+    """Load body data from a CSV file."""
+    text_bodies = np.genfromtxt(filename, delimiter=',', dtype=None, encoding=None)[1:]
+    bodies = []
+    for row in text_bodies:
+        name = row[0]
+        mass = row[1]
+        radius = float(row[2])/2
+        colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+        position = np.array([float(col) for col in row[3:5]])
+        velocity = np.array([float(col) for col in row[6:8]])
+        print(position, velocity)
+        body = Body(name, colour, float(mass), float(radius), position, velocity)
+        bodies.append(body)
+    return bodies
+
+#bodies = load_body_from_csv('planets.csv')
+bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
 initial_norming(bodies)
 
 fig, ax = plt.subplots()
 
 # drawing
-dim = 3
+dim = 2
 ax.set(xlim=[-dim, dim], ylim=[-dim, dim], xlabel='X', ylabel='Y')
 fig.set_figheight(6)
 fig.set_figwidth(6)
@@ -150,6 +172,7 @@ def plot_init(bodies):
     for body in bodies:
         scats.append(ax.scatter(0, 0, c=body.display_colour, s=5, label=body.name))
         lines.append(ax.plot(body.position[0], body.position[1], c=body.display_colour, alpha=0.2, label=f'{body.name} orbit')[0])
+    ax.legend()
     return scats, lines
 
 #creates the scatter and line objects for each body
