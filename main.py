@@ -138,9 +138,9 @@ class Simulation:
 
 class Animation:
 
-    def __init__(self, simulation, bodies, plot_size=6, plot_dimensions=1, sim_duration=1000):
+    def __init__(self, simulation, plot_size=6, plot_dimensions=1, sim_duration=1000):
         """Initialize the animation with the bodies and simulation duration."""
-        self.bodies = bodies
+        self.bodies = simulation.bodies
         self.simulation = simulation
         self.plot_size = plot_size
         self.plot_dimensions = plot_dimensions
@@ -223,4 +223,4 @@ bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
 # Initialize the simulation
 sim = Simulation(bodies, dimension=2, G=3, norming_distance=149, norming_velocity=29.8)
 # Initialize the animation
-anim = Animation(sim, bodies, plot_size=6, plot_dimensions=3, sim_duration=1000)
+anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000)
