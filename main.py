@@ -18,9 +18,10 @@ class Body:
 
     def __repr__(self):
         return f"Body(name={self.name}, mass={self.mass}, radius={self.radius}, position={self.position}, velocity={self.velocity})"
-    
+
 def relative_position(body1, body2):
     """Calculate the relative position vector from body1 to body2."""
+    print("Max Earth distance:", np.linalg.norm(body2.position - body1.position))
     return body2.position - body1.position
 
 def twoBody_acceleration(body1, body2):
@@ -62,7 +63,7 @@ def centre_of_mass(bodies):
     for body in bodies:
         COM_position += body.mass * body.position
     #COM_position = np.add([body.mass * body.position] for body in bodies)
-    print("Center of mass position:", COM_position)
+    print("Center of mass position:", repr(COM_position))
     return COM_position
 
 def relative_positions(bodies, COM_position):
@@ -72,27 +73,29 @@ def relative_positions(bodies, COM_position):
 
 def COM_velocity(bodies):
     """Calculate the velocity of the center of mass of the system. DO mass norming beforehand!"""
-    COM_velocity = sum(body.mass * body.velocity for body in bodies)
-    return COM_velocity
+    COM_vel = sum(body.mass * body.velocity for body in bodies)
+    return COM_vel
 
 def relative_velocities(bodies, COM_velocity):
     """calculate the realtive velocities of all bodies with respect to the COM."""
     for body in bodies:
         body.velocity -= COM_velocity
 
+def norm_units(bodies):
+    AU = 1.496e11  # Astronomical Unit in meters
+    vel_Earth = 29780  # Earth's orbital velocity in m/s
+    for body in bodies:
+        body.position /= AU
+        body.velocity /= vel_Earth
+
 def initial_norming(bodies):
     """Normalize the masses, calculate the center of mass position and velocity, and adjust bodies accordingly."""
+    norm_units(bodies)
     normMasses(bodies)
     COM_position = centre_of_mass(bodies)
     relative_positions(bodies, COM_position)
-    COM_velocity = COM_velocity(bodies)
-    relative_velocities(bodies, COM_velocity)
-
-""" def solve_COM(bodies):
-    accs = accelerations(bodies)
-    def 
- """
-
+    COM_vel = COM_velocity(bodies)
+    relative_velocities(bodies, COM_vel)
 
 def solve_velocities(bodies, start, dt, sim_duration=10000):
     def equations_of_motion(t, y):
@@ -121,16 +124,18 @@ def solve_velocities(bodies, start, dt, sim_duration=10000):
 x = 5.972e24  # kg
 #mass of moon in variable y
 y = 7.348e22  # kg
-test_earth = Body("Earth", 'green', x, 1, [1, 0], [0, 1])
+test_earth = Body("Earth", 'green', x, 1, [1.0, 0], [0.0, 1])
 test_earth2 = Body("Earth2", 'green', 5.972e24, 6371e3, [100000], [0])
 test_moon = Body("Moon", 'blue', y, 1, [1.002569, 0], [0, 1.033])
-test_sun = Body("Sun", 'red', 1.989e25, 1, [0, 0], [0, 0])
+test_moon2 = Body("Moon", 'blue', y, 1, [-1.0, 0], [0, 1.033])
+test_sun = Body("Sun", 'red', 1.989e30, 1, [0.0, 0], [0.0, 0])
+test_mars = Body("Mars", 'orange', 6.4171e23, 1, [1.524, 0], [0, 0.81])
 
 #earth = Body("Earth", 5.972e24, 6371e3, [0, 0, 0], [0, 0, 0])
 #earth2 = Body("Earth2", 5.972e24, 6371e3, [100000, 0, 0], [0, 0, 0])
 #moon = Body("Moon", 7.348e22, 1737e3, [384400e3, 0, 0], [0, 1022, 0])
 
-bodies = [test_earth, test_sun]
+bodies = [test_earth, test_sun, test_mars]
 initial_norming(bodies)
 #bodies = [earth, moon]
 
@@ -145,19 +150,35 @@ fig, ax = plt.subplots()
 #scat2 = ax.scatter(0, 0, c="g", s=5, label=f'earth')
 #scat3 = ax.scatter(0, 0, c="b", s=5, label=f'moon')
 #line = ax.plot(test_moon.position[0], test_moon.position[1], c="k", alpha=0.2, label=f'earth orbit')[0]
-ax.set(xlim=[-2, 2], ylim=[-2, 2], xlabel='X', ylabel='Y')
+dim = 3
+ax.set(xlim=[-dim, dim], ylim=[-dim, dim], xlabel='X', ylabel='Y')
+fig.set_figheight(6)
+fig.set_figwidth(6)
 ax.legend()
 
-def draw_body(body):
+def plot_init(bodies):
+    scats = []
+    lines = []
+    for body in bodies:
+        scats.append(ax.scatter(0, 0, c=body.display_colour, s=5, label=body.name))
+        lines.append(ax.plot(body.position[0], body.position[1], c=body.display_colour, alpha=0.2, label=f'{body.name} orbit')[0])
+    return scats, lines
+
+global_scats, global_lines = plot_init(bodies)
+
+def update_body_plot(body, scat, line):
     """Draws body and its orbit in the plot."""
-    scat = ax.scatter(0, 0, c=body.display_colour, s=5, label=body.name)
     data = np.stack([body.position[0], body.position[1]]).T
     scat.set_offsets(data)
-    line = ax.plot(body.position[0], body.position[1], c=body.display_colour, alpha=0.2, label=f'{body.name} orbit')[0]
     lineData = line.get_data(True)
     line.set_xdata(np.append(lineData[0], body.position[0]))
     line.set_ydata(np.append(lineData[1], body.position[1]))
     return (scat, line)
+
+def draw_bodies(bodies, scats, lines):
+    for i, body in enumerate(bodies):
+        scats[i], lines[i] = update_body_plot(body, scats[i], lines[i])
+    return scats, lines
 
 def update(frame):
     #continuous_evolve = solve_COM(bodies).y
@@ -186,7 +207,7 @@ def update(frame):
     lineData = line.get_data(True)
     line.set_xdata(np.append(lineData[0], continuous_evolve[0][::100]))
     line.set_ydata(np.append(lineData[1], continuous_evolve[1][::100])) """
-    graphs = [draw_body(body) for body in bodies]
+    graphs = [draw_bodies(bodies, global_scats, global_lines)]
     return graphs
 
 
