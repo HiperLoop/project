@@ -25,7 +25,6 @@ def solar_system():
     #load Sun from the custom CSV file
     sun = load_body_from_custom_csv('./objects/custom_objects.csv')[0]
     bodies = [sun] + planets
-    print("Loaded bodies:", bodies)
     # Initialize the simulation
     sim = Simulation(bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.1)
     # Initialize the animation
@@ -38,7 +37,6 @@ def solar_system_3D():
     #load Sun from the custom CSV file
     sun = load_body_from_custom_csv('./objects/custom_objects.csv', dimension=3)[0]
     bodies = [sun] + planets
-    print("Loaded bodies:", bodies)
     # Initialize the simulation
     sim = Simulation(bodies, dimension=3, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.1)
     # Initialize the animation

@@ -56,11 +56,8 @@ class Simulation:
     def centre_of_mass(self):
         """Calculate the center of mass of the system. DO nroming of masses beforehand!"""
         COM_position = np.zeros(self.dimension)
-        print(self.dimension)
         for body in self.bodies:
             COM_position += body.mass * body.position
-        #COM_position = np.add([body.mass * body.position] for body in bodies)
-        print("Center of mass position:", repr(COM_position))
         return COM_position
 
     def relative_positions(self, COM_position):

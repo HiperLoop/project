@@ -28,7 +28,6 @@ def load_body_from_custom_csv(filename, dimension=2):
         colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
         position = np.array([float(col) for col in row[3:3+dimension]])
         velocity = np.array([float(col) for col in row[6:6+dimension]])
-        print(position, velocity)
         body = Body(name, colour, float(mass), float(radius), position, velocity)
         bodies.append(body)
     return bodies
