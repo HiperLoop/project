@@ -22,7 +22,7 @@ class Body:
 
 class Simulation:
 
-    def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, reverse=False, time_step=0.01):
+    def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01):
         """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
         self.time_step = time_step  # Time step for the simulation
         self.bodies = bodies
@@ -31,6 +31,7 @@ class Simulation:
         self.G = G  # Gravitational constant
         self.norming_distance = norming_distance  # Normalization distance in AU
         self.norming_velocity = norming_velocity
+        self.unit_norming = norm  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
         if reverse: self.reverse_velocities()
 
@@ -103,6 +104,7 @@ class Simulation:
 
     def initial_norming(self):
         """Normalize the masses, calculate the center of mass position and velocity, and adjust bodies accordingly."""
+        if self.unit_norming: self.norm_units()
         self.normMasses()
         self.COM_position = self.centre_of_mass()
         self.relative_positions(self.COM_position)
@@ -220,9 +222,31 @@ def load_body_from_custom_csv(filename):
         bodies.append(body)
     return bodies
 
-#bodies = load_body_from_csv('planets.csv')
-bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
-# Initialize the simulation
-sim = Simulation(bodies, dimension=2, G=3, norming_distance=149, norming_velocity=29.8, reverse=False, time_step=0.1)
-# Initialize the animation
-anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000, frame_rate=100)
+def figure_eight_configureation():
+    """Configure the simulation for the figure-eight configuration."""
+    bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
+    # Initialize the simulation
+    sim = Simulation(bodies, dimension=2, G=3, norming_distance=149, norming_velocity=29.8, norm=False, reverse=False, time_step=0.1)
+    # Initialize the animation
+    anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000, frame_rate=100)
+
+def solar_system():
+    """Configure the simulation for the solar system."""
+    # Load planets from the CSV file
+    planets = load_body_from_csv('planets.csv')
+    #load Sun from the custom CSV file
+    sun = load_body_from_custom_csv('custom_objects.csv')[0]
+    bodies = [sun] + planets
+    print("Loaded bodies:", bodies)
+    # Initialize the simulation
+    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.1)
+    # Initialize the animation
+    anim = Animation(sim, plot_size=6, plot_dimensions=40, sim_duration=1000, frame_rate=100)
+
+def main():
+    """Main function to run the simulation."""
+    # Uncomment the desired simulation configuration
+    #figure_eight_configureation()
+    solar_system()
+
+main()
