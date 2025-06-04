@@ -27,7 +27,7 @@ def relative_position(body1, body2):
 def twoBody_acceleration(body1, body2):
     """Calculate the accelaration fof body one towards body 2."""
     g = 6.67430e-11  # Gravitational constant in m^3 kg^-1 s^-2
-    G = 1  # Modified gravitational constant
+    G = 3  # Modified gravitational constant
     r_vector = relative_position(body1, body2)
     distance = np.linalg.norm(r_vector)
     
@@ -136,6 +136,11 @@ def load_body_from_csv(filename):
         norm_units(bodies)
     return bodies
 
+def reverse_velocities(bodies):
+    """Reverse the velocities of the bodies."""
+    for body in bodies:
+        body.velocity *= -1
+
 def load_body_from_custom_csv(filename):
     """Load body data from a CSV file."""
     text_bodies = np.genfromtxt(filename, delimiter=',', dtype=None, encoding=None)[1:]
@@ -155,6 +160,7 @@ def load_body_from_custom_csv(filename):
 #bodies = load_body_from_csv('planets.csv')
 bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
 initial_norming(bodies)
+reverse_velocities(bodies)
 
 fig, ax = plt.subplots()
 
