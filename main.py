@@ -21,6 +21,7 @@ class Body:
         return f"Body(name={self.name}, mass={self.mass}, radius={self.radius}, position={self.position}, velocity={self.velocity})"
 
 class Simulation:
+    """Class for simulating gravitational interactions between n bodies."""
 
     def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01):
         """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
@@ -141,6 +142,7 @@ class Simulation:
             body.velocity *= -1
 
 class Animation:
+    """Class for animating the simulation of n bodies."""
 
     def __init__(self, simulation, plot_size=6, plot_dimensions=1, frame_rate=100, sim_duration=1000):
         """Initialize the animation with the bodies and simulation duration."""
@@ -246,7 +248,7 @@ def solar_system():
 def main():
     """Main function to run the simulation."""
     # Uncomment the desired simulation configuration
-    figure_eight_configureation()
-    #solar_system()
+    #figure_eight_configureation()
+    solar_system()
 
 main()
