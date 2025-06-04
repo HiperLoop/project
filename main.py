@@ -8,8 +8,9 @@ class Body:
 
     dimension = 2  # Number of dimensions (3D space)
 
-    def __init__(self, name, mass, radius, position, velocity):
+    def __init__(self, name, colour, mass, radius, position, velocity):
         self.name = name
+        self.display_colour = colour
         self.mass = mass
         self.radius = radius
         self.position = np.array(position)
@@ -56,9 +57,39 @@ def accelerations(bodies):
 def normMasses(bodies):
     """Normalize the masses of the bodies to a common scale."""
     total_mass = sum(body.mass for body in bodies)
+    if total_mass == 0:
+        raise ValueError("Total mass of bodies cannot be zero for normalization.")
     for body in bodies:
         body.mass /= total_mass
     print("Normalized masses:", [body.mass for body in bodies])
+
+def centre_of_mass(bodies):
+    """Calculate the center of mass of the system. DO nroming of masses beforehand!"""
+    COM_position = sum(body.mass * body.position for body in bodies)
+    return COM_position
+
+def relative_positions(bodies, COM_position):
+    """calculate the realtive positions of all bodies with respect to the COM."""
+    for body in bodies:
+        body.position -= COM_position
+
+def COM_velocity(bodies):
+    """Calculate the velocity of the center of mass of the system. DO mass norming beforehand!"""
+    COM_velocity = sum(body.mass * body.velocity for body in bodies)
+    return COM_velocity
+
+def relative_velocities(bodies, COM_velocity):
+    """calculate the realtive velocities of all bodies with respect to the COM."""
+    for body in bodies:
+        body.velocity -= COM_velocity
+
+def initial_norming(bodies):
+    """Normalize the masses, calculate the center of mass position and velocity, and adjust bodies accordingly."""
+    normMasses(bodies)
+    COM_position = centre_of_mass(bodies)
+    relative_positions(bodies, COM_position)
+    COM_velocity = COM_velocity(bodies)
+    relative_velocities(bodies, COM_velocity)
 
 def solve_velocities(bodies, start, dt, sim_duration=10000):
     """"Use scipy's solve_ivp to evolve the velocities of the bodies."""
@@ -87,14 +118,14 @@ def solve_velocities(bodies, start, dt, sim_duration=10000):
 x = 5.972e24  # kg
 #mass of moon in variable y
 y = 7.348e22  # kg
-test_earth = Body("Earth", x, 1, [1, 0], [0, 1])
-test_earth2 = Body("Earth2", 5.972e24, 6371e3, [100000], [0])
-test_moon = Body("Moon", y, 1, [1.002569, 0], [0, 1.033])
-test_sun = Body("Sun", 1.989e30, 1, [0, 0], [0, 0])
+test_earth = Body("Earth", 'green', x, 1, [1, 0], [0, 1])
+test_earth2 = Body("Earth2", 'green', 5.972e24, 6371e3, [100000], [0])
+test_moon = Body("Moon", 'blue', y, 1, [1.002569, 0], [0, 1.033])
+test_sun = Body("Sun", 'yellow', 1.989e30, 1, [0, 0], [0, 0])
 
-earth = Body("Earth", 5.972e24, 6371e3, [0, 0, 0], [0, 0, 0])
-earth2 = Body("Earth2", 5.972e24, 6371e3, [100000, 0, 0], [0, 0, 0])
-moon = Body("Moon", 7.348e22, 1737e3, [384400e3, 0, 0], [0, 1022, 0])
+#earth = Body("Earth", 5.972e24, 6371e3, [0, 0, 0], [0, 0, 0])
+#earth2 = Body("Earth2", 5.972e24, 6371e3, [100000, 0, 0], [0, 0, 0])
+#moon = Body("Moon", 7.348e22, 1737e3, [384400e3, 0, 0], [0, 1022, 0])
 
 bodies = [test_earth, test_sun, test_moon]
 normMasses(bodies)
@@ -107,19 +138,30 @@ print("Final positions:", [body.position for body in bodies]) """
 
 fig, ax = plt.subplots()
 
-scat = ax.scatter(0, 0, c="r", s=5, label=f'sun')
-scat2 = ax.scatter(0, 0, c="g", s=5, label=f'earth')
-scat3 = ax.scatter(0, 0, c="b", s=5, label=f'moon')
-line = ax.plot(test_moon.position[0], test_moon.position[1], c="k", alpha=0.2, label=f'earth orbit')[0]
+#scat = ax.scatter(0, 0, c="r", s=5, label=f'sun')
+#scat2 = ax.scatter(0, 0, c="g", s=5, label=f'earth')
+#scat3 = ax.scatter(0, 0, c="b", s=5, label=f'moon')
+#line = ax.plot(test_moon.position[0], test_moon.position[1], c="k", alpha=0.2, label=f'earth orbit')[0]
 ax.set(xlim=[-2, 2], ylim=[-2, 2], xlabel='X', ylabel='Y')
 ax.legend()
+
+def draw_body(body):
+    """Draws body and its orbit in the plot."""
+    scat = ax.scatter(0, 0, c=body.display_colour, s=5, label=body.name)
+    data = np.stack([body.position[0], body.position[1]]).T
+    scat.set_offsets(data)
+    line = ax.plot(body.position[0], body.position[1], c=body.display_colour, alpha=0.2, label=f'{body.name} orbit')[0]
+    lineData = line.get_data(True)
+    line.set_xdata(np.append(lineData[0], body.position[0]))
+    line.set_ydata(np.append(lineData[1], body.position[1]))
+    return (scat, line)
 
 def update(frame):
     continuous_evolve = solve_velocities(bodies, 0, 0.01, sim_duration=1000).y
     #print(continuous_evolve[2][-1], continuous_evolve[3][-1])
     #all_evolves += (continuous_evolve)
     # for each frame, update the data stored on each artist.
-    x = continuous_evolve[2][-1]
+    """ x = continuous_evolve[2][-1]
     y = continuous_evolve[3][-1]
     # update the scatter plot:
     data = np.stack([x, y]).T
@@ -139,8 +181,9 @@ def update(frame):
     # for each frame, update the data stored on each artist.
     lineData = line.get_data(True)
     line.set_xdata(np.append(lineData[0], continuous_evolve[0][::100]))
-    line.set_ydata(np.append(lineData[1], continuous_evolve[1][::100]))
-    return (scat, scat2, line)
+    line.set_ydata(np.append(lineData[1], continuous_evolve[1][::100])) """
+    graphs = [draw_body(body) for body in bodies]
+    return graphs
 
 
 ani = animation.FuncAnimation(fig=fig, func=update, frames=1000, interval=10)
