@@ -131,21 +131,6 @@ class Simulation:
         result = solve_ivp(equations_of_motion, t_span, initial_conditions, vectorized=True)
         return result
 
-    def load_body_from_csv(filename):
-        """Load body data from a CSV file."""
-        text_bodies = np.genfromtxt(filename, delimiter=',', dtype=None, encoding=None)[1:]
-        bodies = []
-        for row in text_bodies:
-            name = row[0]
-            mass = row[1]
-            distance = row[8]
-            radius = float(row[2])/2
-            velocity = row[12]
-            colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-            body = Body(name, colour, float(mass), float(radius), [float(distance), float(0)], [float(0), float(velocity)])
-            bodies.append(body)
-        return bodies
-
     def reverse_velocities(bodies):
         """Reverse the velocities of the bodies."""
         for body in bodies:
@@ -201,6 +186,21 @@ class Animation:
     def animate(self):
         ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=1000, interval=10)
         plt.show()
+
+def load_body_from_csv(filename):
+        """Load body data from a CSV file."""
+        text_bodies = np.genfromtxt(filename, delimiter=',', dtype=None, encoding=None)[1:]
+        bodies = []
+        for row in text_bodies:
+            name = row[0]
+            mass = row[1]
+            distance = row[8]
+            radius = float(row[2])/2
+            velocity = row[12]
+            colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+            body = Body(name, colour, float(mass), float(radius), [float(distance), float(0)], [float(0), float(velocity)])
+            bodies.append(body)
+        return bodies
 
 def load_body_from_custom_csv(filename):
     """Load body data from a CSV file."""
