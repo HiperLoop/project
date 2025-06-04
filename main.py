@@ -22,15 +22,17 @@ class Body:
 
 class Simulation:
 
-    def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, reverse=False):
+    def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, reverse=False, time_step=0.01):
+        """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
+        self.time_step = time_step  # Time step for the simulation
         self.bodies = bodies
         self.dimension = dimension
         Body.dimension = dimension  # Set the dimension for the Body class
         self.G = G  # Gravitational constant
         self.norming_distance = norming_distance  # Normalization distance in AU
         self.norming_velocity = norming_velocity
-        self.initial_norming(bodies)  # Normalize masses and calculate center of mass
-        if reverse: self.reverse_velocities(bodies)
+        self.initial_norming()  # Normalize masses and calculate center of mass
+        if reverse: self.reverse_velocities()
 
     def relative_position(self, body1, body2):
         """Calculate the relative position vector from body1 to body2."""
@@ -49,114 +51,114 @@ class Simulation:
         accelration_vector = (accelration_magnitude / distance) * r_vector
         return accelration_vector
 
-    def accelerations(self, bodies):
+    def accelerations(self):
         """Calculate the accelerations of all bodies in the system due to gravitational interactions."""
-        accs = np.zeros((len(bodies), bodies[0].dimension))
-        for i, body1 in enumerate(bodies):
-            for j, body2 in enumerate(bodies):
+        accs = np.zeros((len(self.bodies), self.dimension))
+        for i, body1 in enumerate(self.bodies):
+            for j, body2 in enumerate(self.bodies):
                 if i < j:
                     accs[i] += self.twoBody_acceleration(body1, body2)
                     accs[j] += self.twoBody_acceleration(body2, body1)
         return accs
 
-    def normMasses(self, bodies):
+    def normMasses(self):
         """Normalize the masses of the bodies to a common scale."""
-        total_mass = sum(body.mass for body in bodies)
+        total_mass = sum(body.mass for body in self.bodies)
         if total_mass == 0:
             raise ValueError("Total mass of bodies cannot be zero for normalization.")
-        for body in bodies:
+        for body in self.bodies:
             body.mass /= total_mass
 
-    def centre_of_mass(self, bodies):
+    def centre_of_mass(self):
         """Calculate the center of mass of the system. DO nroming of masses beforehand!"""
-        COM_position = np.zeros(bodies[0].dimension)
-        for body in bodies:
+        COM_position = np.zeros(self.dimension)
+        for body in self.bodies:
             COM_position += body.mass * body.position
         #COM_position = np.add([body.mass * body.position] for body in bodies)
         print("Center of mass position:", repr(COM_position))
         return COM_position
 
-    def relative_positions(self, bodies, COM_position):
+    def relative_positions(self, COM_position):
         """calculate the realtive positions of all bodies with respect to the COM."""
-        for body in bodies:
+        for body in self.bodies:
             body.position -= COM_position
 
-    def COM_velocity(self, bodies):
+    def COM_velocity(self):
         """Calculate the velocity of the center of mass of the system. DO mass norming beforehand!"""
-        COM_vel = sum(body.mass * body.velocity for body in bodies)
+        COM_vel = sum(body.mass * body.velocity for body in self.bodies)
         return COM_vel
 
-    def relative_velocities(self, bodies, COM_velocity):
+    def relative_velocities(self, COM_velocity):
         """calculate the realtive velocities of all bodies with respect to the COM."""
-        for body in bodies:
+        for body in self.bodies:
             body.velocity -= COM_velocity
 
-    def norm_units(self, bodies):
+    def norm_units(self):
         """Normalize the units of position and velocity for the bodies."""
         AU = self.norming_distance
         vel_Earth = self.norming_velocity
-        for body in bodies:
+        for body in self.bodies:
             body.position /= AU
             body.velocity /= vel_Earth
 
-    def initial_norming(self, bodies):
+    def initial_norming(self):
         """Normalize the masses, calculate the center of mass position and velocity, and adjust bodies accordingly."""
-        self.normMasses(bodies)
-        self.COM_position = self.centre_of_mass(bodies)
-        self.relative_positions(bodies, self.COM_position)
-        self.COM_vel = self.COM_velocity(bodies)
-        self.relative_velocities(bodies, self.COM_vel)
+        self.normMasses()
+        self.COM_position = self.centre_of_mass()
+        self.relative_positions(self.COM_position)
+        self.COM_vel = self.COM_velocity()
+        self.relative_velocities(self.COM_vel)
 
-    def solve_velocities(self, bodies, start, dt, sim_duration=10000):
+    def solve_velocities(self, start, sim_duration=10000):
         """Solve the equations of motion for the bodies using the Runge-Kutta method."""
         def equations_of_motion(t, y):
-            d = bodies[0].dimension
-            positions = y[:len(bodies) * d].reshape((len(bodies), d))
-            velocities = y[len(bodies) * d:].reshape((len(bodies), d))
+            d = self.dimension
+            positions = y[:len(self.bodies) * d].reshape((len(self.bodies), d))
+            velocities = y[len(self.bodies) * d:].reshape((len(self.bodies), d))
             
             # Update positions
-            for i, body in enumerate(bodies):
+            for i, body in enumerate(self.bodies):
                 body.position = positions[i]
                 body.velocity = velocities[i]
             
             # Calculate accelerations
-            accs = self.accelerations(bodies)
+            accs = self.accelerations()
             
             # Return derivatives
             dydt = np.concatenate((velocities.flatten(), accs.flatten()))
             return dydt
         
-        initial_conditions = np.concatenate([body.position for body in bodies] + [body.velocity for body in bodies])
-        t_span = (start, dt)
+        initial_conditions = np.concatenate([body.position for body in self.bodies] + [body.velocity for body in self.bodies])
+        t_span = (start, self.time_step)
         result = solve_ivp(equations_of_motion, t_span, initial_conditions, vectorized=True)
         return result
 
-    def reverse_velocities(bodies):
+    def reverse_velocities(self):
         """Reverse the velocities of the bodies."""
-        for body in bodies:
+        for body in self.bodies:
             body.velocity *= -1
 
 class Animation:
 
-    def __init__(self, simulation, plot_size=6, plot_dimensions=1, sim_duration=1000):
+    def __init__(self, simulation, plot_size=6, plot_dimensions=1, frame_rate=100, sim_duration=1000):
         """Initialize the animation with the bodies and simulation duration."""
-        self.bodies = simulation.bodies
         self.simulation = simulation
         self.plot_size = plot_size
         self.plot_dimensions = plot_dimensions
+        self.frame_rate = frame_rate
         self.sim_duration = sim_duration
         self.fig, self.ax = plt.subplots()
         self.fig.set_figheight(plot_size)
         self.fig.set_figwidth(plot_size)
         self.ax.set(xlim=[-plot_dimensions, plot_dimensions], ylim=[-plot_dimensions, plot_dimensions], xlabel='X', ylabel='Y')
-        self.global_scats, self.global_lines = self.plot_init(bodies)
+        self.global_scats, self.global_lines = self.plot_init()
         self.animate()
 
-    def plot_init(self, bodies):
+    def plot_init(self):
         """Initializes the plot with scatter points and lines for each body."""
         scats = []
         lines = []
-        for body in bodies:
+        for body in self.simulation.bodies:
             scats.append(self.ax.scatter(0, 0, c=body.display_colour, s=5, label=body.name))
             lines.append(self.ax.plot(body.position[0], body.position[1], c=body.display_colour, alpha=0.2, label=f'{body.name} orbit')[0])
         self.ax.legend()
@@ -171,20 +173,20 @@ class Animation:
         line.set_ydata(np.append(lineData[1], body.position[1]))
         return (scat, line)
 
-    def draw_bodies(self, bodies, scats, lines):
+    def draw_bodies(self, scats, lines):
         """Updates the scatter and line plots for all bodies."""
-        for i, body in enumerate(bodies):
+        for i, body in enumerate(self.simulation.bodies):
             scats[i], lines[i] = self.update_body_plot(body, scats[i], lines[i])
         return scats, lines
 
     def update(self, frame):
         """Update function for the animation."""
-        continuous_evolve = self.simulation.solve_velocities(bodies, 0, 0.01, sim_duration=1000).y
-        graphs = [self.draw_bodies(bodies, self.global_scats, self.global_lines)]
+        continuous_evolve = self.simulation.solve_velocities(0, 1000).y
+        graphs = [self.draw_bodies(self.global_scats, self.global_lines)]
         return graphs
 
     def animate(self):
-        ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=1000, interval=10)
+        ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=1000, interval=1000//self.frame_rate, repeat=False)
         plt.show()
 
 def load_body_from_csv(filename):
@@ -221,6 +223,6 @@ def load_body_from_custom_csv(filename):
 #bodies = load_body_from_csv('planets.csv')
 bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
 # Initialize the simulation
-sim = Simulation(bodies, dimension=2, G=3, norming_distance=149, norming_velocity=29.8)
+sim = Simulation(bodies, dimension=2, G=3, norming_distance=149, norming_velocity=29.8, reverse=False, time_step=0.1)
 # Initialize the animation
-anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000)
+anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000, frame_rate=100)
