@@ -14,7 +14,7 @@ def write_body_to_file():
         pos.append("0")
         vel.append("0")
 
-    file = open('custom_objects.csv', "a")
+    file = open('./objects/custom_objects.csv', "a")
     file.write(name + "," + mass + "," + diameter + "," + ",".join(pos) + "," + ",".join(vel) + "\n")
 
 write_body_to_file()
