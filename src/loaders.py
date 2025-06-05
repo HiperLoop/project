@@ -3,9 +3,12 @@ import random
 from body import Body
 from datetime import datetime, date
 
+OBJECTS_PATH = "./objects/"
+SIMULATIONS_PATH = "./simulations/"
+
 def load_body_from_csv(filename, dimension=2):
         """Load body data from a CSV file."""
-        text_bodies = np.genfromtxt(filename, delimiter=',', dtype=None, encoding=None)[1:]
+        text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
         bodies = []
         for row in text_bodies:
             name = row[0]
@@ -20,7 +23,7 @@ def load_body_from_csv(filename, dimension=2):
 
 def load_body_from_custom_csv(filename, dimension=2):
     """Load body data from a CSV file."""
-    text_bodies = np.genfromtxt(filename, delimiter=',', dtype=None, encoding=None)[1:]
+    text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
     bodies = []
     for row in text_bodies:
         name = row[0]
@@ -49,7 +52,7 @@ def write_simulation_to_file_init(bodies):
     current_time = now.strftime("%H-%M-%S")
     today = date.today()
 
-    file_name = f'./simulations/{today}_{current_time}.csv'
+    file_name = f'{SIMULATIONS_PATH}{today}_{current_time}.csv'
     file = open(file_name, "w")
     file.write("# ================================================================================================\n")
     file.write("#  This file contains the simulation data for a simulation of gravity between n bodies \n")
