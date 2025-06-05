@@ -3,13 +3,13 @@ from simulation import Simulation
 from animation import Animation
 from measures import *
 
-def figure_eight_configureation():
+def figure_eight_configureation(animate=True):
     """Configure the simulation for the figure-eight configuration."""
     bodies = load_body_from_custom_csv('custom_objects.csv')[-4:-1]
     # Initialize the simulation
-    sim = Simulation(bodies, dimension=2, G=3, norm=False, reverse=False, time_step=0.1, save_to_file=False)
+    sim = Simulation(bodies, dimension=2, G=3, norm=False, reverse=False, time_step=0.1, save_to_file=True, auto_run=not animate, iterations=100)
     # Initialize the animation
-    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=3, frame_rate=100)
+    if animate: anim = Animation(simulation=sim, plot_size=6, plot_dimensions=3, frame_rate=100)
 
 def figure_eight_configureation_3D():
     """Configure the simulation for the figure-eight configuration."""
