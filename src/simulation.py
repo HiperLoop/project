@@ -7,10 +7,11 @@ from measures import *
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""
 
-    def __init__(self, bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01, save_to_file=False):
+    def __init__(self, bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, precision = 100, time_step=0.01, save_to_file=False):
         """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
         self.current_step = 0
         self.time_step = time_step  # Time step for the simulation
+        self.calculation_step = time_step/precision
         self.bodies = bodies
         self.dimension = dimension
         Body.dimension = dimension  # Set the dimension for the Body class
@@ -103,7 +104,16 @@ class Simulation:
         self.COM_vel = self.COM_velocity()
         self.relative_velocities(self.COM_vel)
 
-    def solve_velocities(self, start, sim_duration=10000):
+    def calculate_period(self):
+        self.angles[0] = calculate_angle(self.initial_vector, self.bodies)
+        if self.angles [0] >= self.angles[1] and self.angles[1] <= self.angles[2]:
+            print("=================================================================")
+            print(self.current_step * self.time_step)
+            print("=================================================================")
+        self.angles[2] = self.angles[1]
+        self.angles[1] = self.angles[0]
+
+    def solve_velocities(self, start):
         """Solve the equations of motion for the bodies using the Runge-Kutta method."""
         self.current_step += 1
         def equations_of_motion(t, y):
@@ -124,16 +134,12 @@ class Simulation:
             return dydt
         
         initial_conditions = np.concatenate([body.position for body in self.bodies] + [body.velocity for body in self.bodies])
-        t_span = (start, self.time_step)
-        result = solve_ivp(equations_of_motion, t_span, initial_conditions, vectorized=True)
+        t_span = (0, self.time_step)
+        t_evals = np.arange(start, self.time_step, self.calculation_step)
+        result = solve_ivp(equations_of_motion, t_span=t_span, t_eval=t_evals, y0=initial_conditions, vectorized=True)
         if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
-        self.angles[0] = calculate_angle(self.initial_vector, self.bodies)
-        if self.angles [0] >= self.angles[1] and self.angles[1] <= self.angles[2]:
-            print("=================================================================")
-            print(self.current_step * self.time_step)
-            print("=================================================================")
-        self.angles[2] = self.angles[1]
-        self.angles[1] = self.angles[0]
+        #if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
+        #self.calculate_period()
         return result
 
     def reverse_velocities(self):
