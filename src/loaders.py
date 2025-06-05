@@ -10,7 +10,7 @@ def load_body_from_csv(filename, dimension=2):
         for row in text_bodies:
             name = row[0]
             mass = row[1]
-            distance = row[8]
+            distance = row[9]
             radius = float(row[2])/2
             velocity = row[12]
             colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
