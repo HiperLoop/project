@@ -2,12 +2,14 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from body import Body
 from loaders import *
+from measures import *
 
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""
 
-    def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01, save_to_file=False):
+    def __init__(self, bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01, save_to_file=False):
         """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
+        self.current_step = 0
         self.time_step = time_step  # Time step for the simulation
         self.bodies = bodies
         self.dimension = dimension
@@ -18,10 +20,12 @@ class Simulation:
         self.unit_norming = norm  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
         self.save_to_file = save_to_file  # Whether to save simulation data to a file
+        self.initial_vector = relative_position(self.bodies[0], self.bodies[1])
         if reverse: self.reverse_velocities()
         if save_to_file: 
             self.file_name = write_simulation_to_file_init(self.bodies)
             self.file = open(self.file_name, "a")
+        self.angles = [0, 0, 0]
 
     def __del__(self):
         """Close the file if it was opened."""
@@ -29,14 +33,10 @@ class Simulation:
             self.file.close()
             print(f"Simulation data saved to {self.file_name}")
 
-    def relative_position(self, body1, body2):
-        """Calculate the relative position vector from body1 to body2."""
-        return body2.position - body1.position
-
     def twoBody_acceleration(self, body1, body2):
         """Calculate the accelaration fof body one towards body 2."""
         g = 6.67430e-11  # Gravitational constant in m^3 kg^-1 s^-2
-        r_vector = self.relative_position(body1, body2)
+        r_vector = relative_position(body1, body2)
         distance = np.linalg.norm(r_vector)
         
         if distance == 0:
@@ -105,6 +105,7 @@ class Simulation:
 
     def solve_velocities(self, start, sim_duration=10000):
         """Solve the equations of motion for the bodies using the Runge-Kutta method."""
+        self.current_step += 1
         def equations_of_motion(t, y):
             d = self.dimension
             positions = y[:len(self.bodies) * d].reshape((len(self.bodies), d))
@@ -126,6 +127,13 @@ class Simulation:
         t_span = (start, self.time_step)
         result = solve_ivp(equations_of_motion, t_span, initial_conditions, vectorized=True)
         if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
+        self.angles[0] = calculate_angle(self.initial_vector, self.bodies)
+        if self.angles [0] >= self.angles[1] and self.angles[1] <= self.angles[2]:
+            print("=================================================================")
+            print(self.current_step * self.time_step)
+            print("=================================================================")
+        self.angles[2] = self.angles[1]
+        self.angles[1] = self.angles[0]
         return result
 
     def reverse_velocities(self):

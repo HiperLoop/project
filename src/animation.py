@@ -66,5 +66,5 @@ class Animation:
         return graphs
 
     def animate(self):
-        ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=10000, interval=1000//self.frame_rate, repeat=False)
+        ani = animation.FuncAnimation(fig=self.fig, func=self.update, frames=100000, interval=1000//self.frame_rate, repeat=False)
         plt.show()
