@@ -4,8 +4,9 @@ def main():
     """Main function to run the simulation."""
     # Uncomment the desired simulation configuration
     #figure_eight_configureation()
-    figure_eight_configureation_3D()
+    #figure_eight_configureation_3D()
     #solar_system()
     #solar_system_3D()
+    comet_solar_system()
 
 main()
