@@ -1,11 +1,12 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 from body import Body
+from loaders import *
 
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""
 
-    def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01):
+    def __init__(self, bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01, save_to_file=False):
         """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
         self.time_step = time_step  # Time step for the simulation
         self.bodies = bodies
@@ -16,7 +17,17 @@ class Simulation:
         self.norming_velocity = norming_velocity
         self.unit_norming = norm  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
+        self.save_to_file = save_to_file  # Whether to save simulation data to a file
         if reverse: self.reverse_velocities()
+        if save_to_file: 
+            self.file_name = write_simulation_to_file_init(self.bodies)
+            self.file = open(self.file_name, "a")
+
+    def __del__(self):
+        """Close the file if it was opened."""
+        if self.save_to_file and hasattr(self, 'file'):
+            self.file.close()
+            print(f"Simulation data saved to {self.file_name}")
 
     def relative_position(self, body1, body2):
         """Calculate the relative position vector from body1 to body2."""
@@ -114,6 +125,7 @@ class Simulation:
         initial_conditions = np.concatenate([body.position for body in self.bodies] + [body.velocity for body in self.bodies])
         t_span = (start, self.time_step)
         result = solve_ivp(equations_of_motion, t_span, initial_conditions, vectorized=True)
+        if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
         return result
 
     def reverse_velocities(self):
