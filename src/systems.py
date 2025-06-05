@@ -30,6 +30,20 @@ def solar_system():
     # Initialize the animation
     anim = Animation(sim, plot_size=6, plot_dimensions=40, sim_duration=1000, frame_rate=100)
 
+def comet_solar_system():
+    """Configure the simulation for the solar system."""
+    # Load planets from the CSV file
+    planets = load_body_from_csv('./objects/planets.csv')
+    #load Sun from the custom CSV file
+    sun = load_body_from_custom_csv('./objects/custom_objects.csv')[0]
+    # Load comet from the custom CSV file
+    comet = load_body_from_custom_csv('./objects/custom_objects.csv')[-1]
+    bodies = [sun] + [comet]# + planets
+    # Initialize the simulation
+    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.1, save_to_file=True)
+    # Initialize the animation
+    anim = Animation(sim, plot_size=6, plot_dimensions=15, sim_duration=1000, frame_rate=200)
+
 def solar_system_3D():
     """Configure the simulation for the solar system."""
     # Load planets from the CSV file
