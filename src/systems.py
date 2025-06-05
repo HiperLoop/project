@@ -12,7 +12,7 @@ def figure_eight_configureation():
 
 def figure_eight_configureation_3D():
     """Configure the simulation for the figure-eight configuration."""
-    bodies = load_body_from_custom_csv('./objects/custom_objects.csv', dimension=3)[-3:]
+    bodies = load_body_from_custom_csv('./objects/custom_objects.csv', dimension=3)[-4:]
     # Initialize the simulation
     sim = Simulation(bodies, dimension=3, G=3, norm=False, reverse=False, time_step=0.1)
     # Initialize the animation
