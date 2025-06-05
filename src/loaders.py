@@ -78,13 +78,12 @@ def write_simulation_to_file_init(bodies):
 
 def load_simulation_from_file(filename, dimension=2):
     """Load simulation data from a CSV file."""
-    text_bodies = np.genfromtxt(SIMULATIONS_PATH+filename, delimiter=',', dtype=None, encoding=None)
+    text_bodies = np.genfromtxt(SIMULATIONS_PATH+filename, delimiter=',', dtype=float, encoding=None)
     #print(text_bodies.shape)
     bodies = []
-    characteristics = text_bodies[0]
+    characteristics = np.genfromtxt(SIMULATIONS_PATH+filename, delimiter=',', dtype=str, encoding=None)[0]
     initial_vectors = text_bodies[1]
     vector_data = text_bodies[2:]
-    print(vector_data[0][0])
     vec_size = 6
     for i in range(len(characteristics) // vec_size):
         name = characteristics[i*vec_size]
