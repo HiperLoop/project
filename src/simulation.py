@@ -7,7 +7,7 @@ from measures import *
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""
 
-    def __init__(self, bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, precision = 100, time_step=0.01, save_to_file=False):
+    def __init__(self, bodies, dimension=2, G=1, norm=True, reverse=False, precision = 100, time_step=0.01, save_to_file=False, auto_run=False, **kwargs):
         """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
         self.current_step = 0
         self.time_step = time_step  # Time step for the simulation
@@ -16,8 +16,9 @@ class Simulation:
         self.dimension = dimension
         Body.dimension = dimension  # Set the dimension for the Body class
         self.G = G  # Gravitational constant
-        self.norming_distance = norming_distance  # Normalization distance in AU
-        self.norming_velocity = norming_velocity
+        if norm:
+            self.norming_distance = kwargs.get('norming_distance', None)  # Normalization distance in AU
+            self.norming_velocity = kwargs.get('norming_velocity', None)
         self.unit_norming = norm  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
         self.save_to_file = save_to_file  # Whether to save simulation data to a file
@@ -27,6 +28,10 @@ class Simulation:
             self.file_name = write_simulation_to_file_init(self.bodies)
             self.file = open(self.file_name, "a")
         self.angles = [0, 0, 0]
+
+        if auto_run:
+            self.iterations = kwargs.get('iterations', None)
+            self.runner()
 
     def __del__(self):
         """Close the file if it was opened."""
@@ -146,3 +151,11 @@ class Simulation:
         """Reverse the velocities of the bodies."""
         for body in self.bodies:
             body.velocity *= -1
+    
+    def runner(self):
+        '''Automatic simulation runner'''
+        print("Simulation started")
+        while self.current_step < self.iterations:
+            self.solve_velocities(0)
+            if self.current_step % (self.iterations//100) == 0:
+                print(f'{self.current_step / (self.iterations//100)}% done')
