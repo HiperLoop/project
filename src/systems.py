@@ -5,19 +5,19 @@ from measures import *
 
 def figure_eight_configureation():
     """Configure the simulation for the figure-eight configuration."""
-    bodies = load_body_from_custom_csv('custom_objects.csv')[-3:]
+    bodies = load_body_from_custom_csv('custom_objects.csv')[-4:-1]
     # Initialize the simulation
-    sim = Simulation(bodies, dimension=2, G=3, norm=False, reverse=False, time_step=0.1)
+    sim = Simulation(bodies, dimension=2, G=3, norm=False, reverse=False, time_step=0.1, save_to_file=False)
     # Initialize the animation
-    anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000, frame_rate=100)
+    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=3, frame_rate=100)
 
 def figure_eight_configureation_3D():
     """Configure the simulation for the figure-eight configuration."""
     bodies = load_body_from_custom_csv('custom_objects.csv', dimension=3)[-4:]
     # Initialize the simulation
-    sim = Simulation(bodies, dimension=3, G=3, norm=False, reverse=False, time_step=0.1)
+    sim = Simulation(bodies, dimension=3, G=3, norm=False, reverse=False, time_step=0.1, save_to_file=True)
     # Initialize the animation
-    anim = Animation(sim, plot_size=6, plot_dimensions=3, sim_duration=1000, frame_rate=100)
+    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=3, frame_rate=100)
 
 def solar_system():
     """Configure the simulation for the solar system."""
@@ -27,9 +27,9 @@ def solar_system():
     sun = load_body_from_custom_csv('custom_objects.csv')[0]
     bodies = [sun] + planets
     # Initialize the simulation
-    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, time_step=0.1)
+    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, precision=1000, time_step=0.1, save_to_file=False)
     # Initialize the animation
-    anim = Animation(sim, plot_size=6, plot_dimensions=40, sim_duration=1000, frame_rate=100)
+    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=40, frame_rate=100)
 
 def comet_solar_system():
     """Configure the simulation for the solar system."""
@@ -43,9 +43,12 @@ def comet_solar_system():
     bodies = [sun] + [earth]# + planets
 
     # Initialize the simulation
-    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, time_step=0.01, save_to_file=False)
+    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, precision=10, time_step=0.01, save_to_file=True)
     # Initialize the animation
-    anim = Animation(sim, plot_size=6, plot_dimensions=15, sim_duration=1000, frame_rate=2000)
+    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=3, frame_rate=200)
+
+def system_from_file(file_name, dimension):
+    anim = Animation(plot_size=6, plot_dimensions=3, frame_rate=200, data_from_file=True, dimension=dimension, file_name=file_name)
 
 def solar_system_3D():
     """Configure the simulation for the solar system."""
@@ -57,4 +60,4 @@ def solar_system_3D():
     # Initialize the simulation
     sim = Simulation(bodies, dimension=3, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.1)
     # Initialize the animation
-    anim = Animation(sim, plot_size=6, plot_dimensions=40, sim_duration=1000, frame_rate=100)
+    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=40, frame_rate=100)
