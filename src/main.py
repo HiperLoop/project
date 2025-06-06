@@ -12,7 +12,8 @@ def main():
     #system_from_file("2025-06-05_16-28-24.csv", dimension=2)
     #system_from_file("2025-06-05_16-01-10.csv", dimension=3) # 3D load test
     #figure_eight_configureation(False)
-    test_config.run()
+    #test_config.run()
+    centauri_system.run()
 
 #write_body_to_file()
 
