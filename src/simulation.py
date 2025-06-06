@@ -35,8 +35,8 @@ class Simulation:
         # norming parameters
         self.G = parameters.gravitational_constant
         if parameters.do_norming:
-            self.norming_distance = parameters.norming_distance
-            self.norming_velocity = parameters.norming_velocity
+            self.norming_distance = parameters.distance_norm
+            self.norming_velocity = parameters.velocity_norm
         self.unit_norming = parameters.do_norming  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
 
