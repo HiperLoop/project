@@ -15,9 +15,9 @@ def figure_eight_configureation_3D():
     """Configure the simulation for the figure-eight configuration."""
     bodies = load_body_from_custom_csv('custom_objects.csv', dimension=3)[-4:]
     # Initialize the simulation
-    sim = Simulation(bodies, dimension=3, G=3, norm=False, reverse=False, time_step=0.1, save_to_file=True)
+    sim = Simulation(bodies, dimension=3, G=3, norm=False, reverse=False, time_step=0.1, save_to_file=False)
     # Initialize the animation
-    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=3, frame_rate=100)
+    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=1.5, frame_rate=100)
 
 def solar_system():
     """Configure the simulation for the solar system."""
