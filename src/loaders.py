@@ -61,7 +61,6 @@ def load_body_from_csv2(filename, dimension=3):
         colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
         body = Body(name, colour, float(mass), float(radius), position, velocity)
         bodies.append(body)
-    print(bodies)
     return bodies
 
 def load_body_from_custom_csv(filename, dimension=2):
