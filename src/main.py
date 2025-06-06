@@ -13,8 +13,6 @@ def main():
     #system_from_file("2025-06-05_16-01-10.csv", dimension=3) # 3D load test
     #figure_eight_configureation(False)
     
-
-
 #write_body_to_file()
 
 main()
