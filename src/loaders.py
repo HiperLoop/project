@@ -2,6 +2,7 @@ import numpy as np
 import random
 from body import Body
 from datetime import datetime, date
+from scipy.spatial.transform import Rotation as R
 
 OBJECTS_PATH = "./objects/"
 SIMULATIONS_PATH = "./simulations/"
@@ -39,6 +40,29 @@ def load_body_from_csv(filename, dimension=2):
             body = Body(name, colour, float(mass), float(radius), [float(distance)] + [float(0)]*(dimension-1), [float(0), float(velocity)] + [float(0)]*(dimension-2))
             bodies.append(body)
         return bodies
+
+def load_body_from_csv2(filename, dimension=3):
+    """Load body data from a CSV file with the following format: 
+    Name,Mass (10^24 kg),Radius (km),Perihelion (10^6 km),Max Orbital Velocity (km/s),Orbit Inclination (deg),Orbit Eccentricity"""
+    text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
+    bodies = []
+    for row in text_bodies:
+        name = row[0]
+        mass = row[1]
+        radius = float(row[2])
+        position = np.array([float(row[3]),0,0])
+        max_velocity = np.array([0,float(row[4]),0])
+        #Rotate the position according to the inclination and setting it somewhere random around the sun
+        inclination_rotation = R.from_euler('y', float(row[5]), degrees=True)
+        random_rotation = R.from_euler('z', np.random.rand()*360, degrees=True)
+        position=random_rotation.apply(inclination_rotation.apply(position))
+        velocity=random_rotation.apply(inclination_rotation.apply(max_velocity))
+        
+        colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+        body = Body(name, colour, float(mass), float(radius), position, velocity)
+        bodies.append(body)
+    print(bodies)
+    return bodies
 
 def load_body_from_custom_csv(filename, dimension=2):
     """Load body data from a CSV file."""
