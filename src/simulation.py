@@ -4,41 +4,64 @@ from body import Body
 from loaders import *
 from measures import *
 
+class Simualtion_parameters:
+    def __init__(self, **kwargs):
+        self.dimension = kwargs.get('dimension', 2)
+
+        self.do_norming = kwargs.get('do_norming', False)
+        self.distance_norm = kwargs.get('distance_norm', 149.6)
+        self.velocity_norm = kwargs.get('velocity_norm', 29.8)
+        self.gravitational_constant = kwargs.get('gravitational_constant', 1)
+
+        self.step_precision = kwargs.get('step_precision', 100)
+        self.step_time = kwargs.get('step_time', 0.01)
+        self.step_iterations = kwargs.get('step_iterations', 1000)
+
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""
 
-    def __init__(self, bodies, dimension=2, G=1, norm=True, reverse=False, precision = 100, time_step=0.01, save_to_file=False, auto_run=False, **kwargs):
-        """Initialize the simulation with a list of bodies, their dimensions, and gravitational constant."""
+    def __init__(self, bodies, parameters, reverse=False, save_to_file=False, auto_run=False):
+        """Initialize the starting state and simulation parameters"""
+        # ODE calculation variables
         self.current_step = 0
-        self.time_step = time_step  # Time step for the simulation
-        self.calculation_step = time_step/precision
+        self.time_step = parameters.step_time  # Time step for the simulation
+        self.calculation_step = parameters.step_time/parameters.step_precision
+
+        # get bodies and set their dimension
         self.bodies = bodies
-        self.dimension = dimension
-        Body.dimension = dimension  # Set the dimension for the Body class
-        self.G = G  # Gravitational constant
-        if norm:
-            self.norming_distance = kwargs.get('norming_distance', None)  # Normalization distance in AU
-            self.norming_velocity = kwargs.get('norming_velocity', None)
-        self.unit_norming = norm  # Whether to normalize units
+        self.dimension = parameters.dimension
+        Body.dimension = parameters.dimension
+
+        # norming parameters
+        self.G = parameters.gravitational_constant
+        if parameters.do_norming:
+            self.norming_distance = parameters.norming_distance
+            self.norming_velocity = parameters.norming_velocity
+        self.unit_norming = parameters.do_norming  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
-        self.save_to_file = save_to_file  # Whether to save simulation data to a file
-        self.initial_vector = relative_position(self.bodies[0], self.bodies[1])
-        if reverse: self.reverse_velocities()
+
+        self.initial_vector = relative_position(self.bodies[0], self.bodies[1]) # TODO: remove
+        self.angles = [0, 0, 0] # TODO: remove
+
+        if reverse: self.reverse_velocities() # reverse velocities to run simulation backwards
+
+        # file saving parameters
+        self.save_to_file = save_to_file
         if save_to_file: 
             self.file_name = write_simulation_to_file_init(self.bodies)
             self.file = open(self.file_name, "a")
-        self.angles = [0, 0, 0]
 
+        # running without animation
         if auto_run:
-            self.iterations = kwargs.get('iterations', None)
-            self.runner()
+            self.iterations = parameters.step_iterations
 
     def __del__(self):
-        """Close the file if it was opened."""
+        """Close the file for writing data if it was opened."""
         if self.save_to_file and hasattr(self, 'file'):
             self.file.close()
             print(f"Simulation data saved to {self.file_name}")
 
+    # region #################################### Accelerations ##############################################
     def twoBody_acceleration(self, body1, body2):
         """Calculate the accelaration fof body one towards body 2."""
         g = 6.67430e-11  # Gravitational constant in m^3 kg^-1 s^-2
@@ -61,7 +84,8 @@ class Simulation:
                     accs[i] += self.twoBody_acceleration(body1, body2)
                     accs[j] += self.twoBody_acceleration(body2, body1)
         return accs
-
+    # endregion #################################### Accelerations ###########################################
+    # region #################################### Norming ####################################################
     def normMasses(self):
         """Normalize the masses of the bodies to a common scale."""
         total_mass = sum(body.mass for body in self.bodies)
@@ -108,6 +132,7 @@ class Simulation:
         self.relative_positions(self.COM_position)
         self.COM_vel = self.COM_velocity()
         self.relative_velocities(self.COM_vel)
+    # endregion #################################### Norming #################################################
 
     def calculate_period(self):
         self.angles[0] = calculate_angle(self.initial_vector, self.bodies)
@@ -142,8 +167,8 @@ class Simulation:
         t_span = (0, self.time_step)
         t_evals = np.arange(start, self.time_step, self.calculation_step)
         result = solve_ivp(equations_of_motion, t_span=t_span, t_eval=t_evals, y0=initial_conditions, vectorized=True)
-        if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
-        #if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
+        #if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
+        if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
         #self.calculate_period()
         return result
 
@@ -152,6 +177,7 @@ class Simulation:
         for body in self.bodies:
             body.velocity *= -1
     
+    # region #################################### Run simulation ##############################################
     def runner(self):
         '''Automatic simulation runner'''
         print("Simulation started")
@@ -159,3 +185,7 @@ class Simulation:
             self.solve_velocities(0)
             if self.current_step % (self.iterations//100) == 0:
                 print(f'{self.current_step / (self.iterations//100)}% done')
+
+    def start(self):
+        self.runner()
+    # endregion #################################### Run simulation ###########################################
