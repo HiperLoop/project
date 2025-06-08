@@ -1,0 +1,26 @@
+# ================================================================================================
+#  This file contains the simulation data for a simulation of gravity between n bodies 
+#  The first line contains the defining charachterisitics of the bodies with 6 columns for each
+#  Every subsequent line contains their position and velocities 
+# ================================================================================================
+#
+#name,mass,radius,colour,_,_,name,mass,radius,colour,_,_,name,mass,radius,colour,_,_,name,mass,radius,colour,_,_,
+figure_eight_1,0.25,0.5,7CEDE6,0,0,figure_eight_2,0.25,0.5,E99BF1,0,0,figure_eight_3,0.25,0.5,8CC172,0,0,figure_eight_4,0.25,0.5,5AC4C0,0,0
+#x,y,z,vx,vy,vz,x,y,z,vx,vy,vz,x,y,z,vx,vy,vz,x,y,z,vx,vy,vz,
+0.97000436,-0.24308753,0.0,0.466203685,0.43236573,0.0,-0.97000436,0.24308753,0.0,0.466203685,0.43236573,0.0,0.0,0.0,0.0,-0.93240737,-0.86473146,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
