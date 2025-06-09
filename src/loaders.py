@@ -90,7 +90,6 @@ def load_boadies_by_name(names):
         for name in names:
             if name in body_names:
                 names.remove(name)
-                print("found body")
                 file_body_indexes.append(np.where(body_names == name)[0])
 
         loaded_bodies = []
