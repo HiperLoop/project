@@ -41,7 +41,7 @@ def load_body_from_csv(filename, dimension=2):
             bodies.append(body)
         return bodies
 
-def load_body_from_csv2(filename, dimension=3):
+def load_body_from_planets(filename, dimension=3):
     """Load body data from a CSV file with the following format: 
     Name,Mass (10^24 kg),Radius (km),Perihelion (10^6 km),Max Orbital Velocity (km/s),Orbit Inclination (deg),Orbit Eccentricity"""
     text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
