@@ -10,6 +10,7 @@ class System:
         animation_params = kwargs.get('animation_parameters', Animation_parameters())
         simulation_params = kwargs.get('simulation_parameters', Simualtion_parameters())
         self.animate=animate
+        self.name = kwargs.get('name', None)
         if from_file:
             if animate:
                 self.animation = Animation(animation_params, data_from_file=True, file_name=kwargs.get('file_name', None))
@@ -30,10 +31,21 @@ class System:
 #centauri_bodies=load_body_from_custom_csv('centauri.csv', dimension=3)
 #centauri_system = System(animate=True, from_file=False, bodies=centauri_bodies, simulation_parameters=Simualtion_parameters(dimension=3, do_norming=True, distance_norm=1, step_time=0.1), animation_parameters=Animation_parameters(plot_axis_limits=15, plot_dimension=3, frame_rate=200))
 
-def from_file_test(file_name):
-    sys = System(animate=True, from_file=True, animation_parameters=Animation_parameters(plot_axis_limits=2, plot_dimension=3, frame_rate=80), file_name=file_name)
+def animate_from_file(file_name, animation_values=Animation_parameters(plot_axis_limits=2, plot_dimension=3, frame_rate=80)):
+    sys = System(animate=True, from_file=True, animation_parameters=animation_values, file_name=file_name)
     sys.run()
 
+def solar_system():
+    """Configure the simulation for the solar system."""
+    # Load planets from the CSV file
+    planets = load_body_from_planets('planets.csv')
+    #load Sun from the custom CSV file
+    sun = load_body_from_custom_csv('custom_objects.csv', dimension=3)[0]
+    bodies = [sun] + planets
+    solar_system = System(animate=True, from_file=False, bodies=bodies, simulation_parameters=Simualtion_parameters(dimension=3, do_norming=True, step_time=0.1, precision=10, step_iterations=100000), animation_parameters=Animation_parameters(plot_axis_limits=40, plot_dimension=3, frame_rate=40))
+    solar_system.run()
+
+'''These are just fun to see, we found these initial values online and it is one of the very few non-trivial stable solutions to the three body problem.'''
 def figure_eight_configureation(animate=True):
     """Configure the simulation for the figure-eight configuration."""
     bodies = load_body_from_custom_csv('custom_objects.csv')[-4:-1]
@@ -49,62 +61,3 @@ def figure_eight_configureation_3D():
     sim = Simulation(bodies, dimension=3, G=3, norm=False, reverse=False, time_step=0.1, save_to_file=False)
     # Initialize the animation
     anim = Animation(simulation=sim, plot_size=6, plot_dimensions=1.5, frame_rate=100)
-
-def solar_system():
-    """Configure the simulation for the solar system."""
-    # Load planets from the CSV file
-    planets = load_body_from_csv('planets.csv')
-    #load Sun from the custom CSV file
-    sun = load_body_from_custom_csv('custom_objects.csv')[0]
-    bodies = [sun] + planets
-    # Initialize the simulation
-    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, precision=1000, time_step=0.1, save_to_file=False)
-    # Initialize the animation
-    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=40, frame_rate=100)
-
-def solar_system2():
-    """Configure the simulation for the solar system."""
-    # Load planets from the CSV file
-    planets = load_body_from_csv2('planets2.csv')
-    #load Sun from the custom CSV file
-    sun = load_body_from_custom_csv('custom_objects.csv', dimension=3)[0]
-    bodies = [sun] + planets
-    solar_system = System(animate=False, from_file=False, bodies=bodies, simulation_parameters=Simualtion_parameters(dimension=3, do_norming=True, step_time=0.1, precision=10, step_iterations=100000), animation_parameters=Animation_parameters(plot_axis_limits=40, plot_dimension=3, frame_rate=40))
-    solar_system.run()
-    # Initialize the simulation
-    #sim = Simulation(bodies, dimension=3, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, precision=1000, time_step=0.1, save_to_file=False)
-    # Initialize the animation
-    #anim = Animation(simulation=sim, plot_size=6, plot_dimensions=40, frame_rate=100)
-
-
-
-def comet_solar_system():
-    """Configure the simulation for the solar system."""
-    # Load planets from the CSV file
-    planets = load_body_from_csv('planets.csv')
-    #load Sun from the custom CSV file
-    sun = load_body_from_custom_csv('custom_objects.csv')[0]
-    # Load comet from the custom CSV file
-    comet = load_body_from_custom_csv('custom_objects.csv')[-1]
-    earth = load_body_from_csv('planets.csv', dimension=2)[3]  # Load Earth for reference
-    bodies = [sun] + [earth]# + planets
-
-    # Initialize the simulation
-    sim = Simulation(bodies, dimension=2, G=1, norming_distance=149.6, norming_velocity=29.8, norm=True, reverse=False, precision=10, time_step=0.01, save_to_file=True)
-    # Initialize the animation
-    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=3, frame_rate=200)
-
-def system_from_file(file_name, dimension):
-    anim = Animation(plot_size=6, plot_dimensions=3, frame_rate=200, data_from_file=True, dimension=dimension, file_name=file_name)
-
-def solar_system_3D():
-    """Configure the simulation for the solar system."""
-    # Load planets from the CSV file
-    planets = load_body_from_csv('planets.csv', dimension=3)
-    #load Sun from the custom CSV file
-    sun = load_body_from_custom_csv('custom_objects.csv', dimension=3)[0]
-    bodies = [sun] + planets
-    # Initialize the simulation
-    sim = Simulation(bodies, dimension=3, G=1, norming_distance=149, norming_velocity=29.8, norm=True, reverse=False, time_step=0.1)
-    # Initialize the animation
-    anim = Animation(simulation=sim, plot_size=6, plot_dimensions=40, frame_rate=100)
