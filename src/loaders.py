@@ -81,7 +81,7 @@ def load_body_from_custom_csv(filename, dimension=3, indexes=None):
             bodies.append(body)
     return bodies
 
-def load_boadies_by_name(names):
+def load_boadies_by_name(names, dimension=3):
     files = os.listdir(OBJECTS_PATH)
     bodies = []
     for filename in files:
@@ -93,9 +93,9 @@ def load_boadies_by_name(names):
 
         loaded_bodies = []
         if filename == 'planets.csv':
-            loaded_bodies = load_body_from_planets(filename, indexes=file_body_indexes)
+            loaded_bodies = load_body_from_planets(filename, indexes=file_body_indexes, dimension=dimension)
         elif filename == 'custom_objects.csv':
-            loaded_bodies = np.array(load_body_from_custom_csv(filename, indexes=file_body_indexes))
+            loaded_bodies = np.array(load_body_from_custom_csv(filename, indexes=file_body_indexes, dimension=dimension))
         bodies.extend(loaded_bodies)
     return bodies
 

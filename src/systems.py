@@ -66,7 +66,7 @@ def figure_eight_configureation_3D():
     anim = Animation(simulation=sim, plot_size=6, plot_dimensions=1.5, frame_rate=100)
 
 def system_from_user_input(body_names, **kwargs):
-    user_system = System(animate = kwargs.get('animate', False), name="user name", bodies=load_boadies_by_name(body_names), simulation_parameters=kwargs.get('simulation_parameters', Simualtion_parameters()), animation_parameters=kwargs.get('animation_parameters', Animation_parameters()))
+    user_system = System(animate = kwargs.get('animate', False), name="user name", bodies=load_boadies_by_name(body_names, dimension=kwargs.get('dimension', 3)), simulation_parameters=kwargs.get('simulation_parameters', Simualtion_parameters()), animation_parameters=kwargs.get('animation_parameters', Animation_parameters()))
     user_system.run()
 
 pre_made_systems = {"Solar system": solar_system}
