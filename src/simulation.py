@@ -68,7 +68,7 @@ class Simulation:
         r_vector = relative_position(body1, body2)
         distance = np.linalg.norm(r_vector)
         
-        if distance == 0:
+        if distance <= (10*(body1.radius + body2.radius)):
             return np.zeros(body1.dimension)  # No force if bodies are at the same position
         
         accelration_magnitude = self.G * body2.mass / distance**2
@@ -121,6 +121,7 @@ class Simulation:
         AU = self.norming_distance
         vel_Earth = self.norming_velocity
         for body in self.bodies:
+            body.radius /= (1000000 * AU)
             body.position /= AU
             body.velocity /= vel_Earth
 
@@ -167,8 +168,8 @@ class Simulation:
         t_span = (0, self.time_step)
         t_evals = np.arange(start, self.time_step, self.calculation_step)
         result = solve_ivp(equations_of_motion, t_span=t_span, t_eval=t_evals, y0=initial_conditions, vectorized=True)
-        #if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
-        if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
+        if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
+        #if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
         #self.calculate_period()
         return result
 
