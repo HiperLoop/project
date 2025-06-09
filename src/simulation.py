@@ -8,7 +8,7 @@ class Simualtion_parameters:
     def __init__(self, **kwargs):
         self.dimension = kwargs.get('dimension', 2)
 
-        self.do_norming = kwargs.get('do_norming', False)
+        self.do_norming = kwargs.get('do_norming', True)
         self.distance_norm = kwargs.get('distance_norm', 149.6)
         self.velocity_norm = kwargs.get('velocity_norm', 29.8)
         self.gravitational_constant = kwargs.get('gravitational_constant', 1)
