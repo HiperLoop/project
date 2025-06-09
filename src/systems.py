@@ -68,3 +68,5 @@ def figure_eight_configureation_3D():
 def system_from_user_input(body_names):
     user_system = System(name="user name", bodies=load_boadies_by_name(body_names))
     user_system.run()
+
+pre_made_systems = [("Solar system", solar_system())]
