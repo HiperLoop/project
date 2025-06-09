@@ -1,5 +1,10 @@
 from systems import *
 
+def user_input():
+    # print program functionality
+    print("Welcome! This is a program that simulates ")
+    
+
 def main():
     """Main function to run the simulation."""
     # Uncomment the desired simulation configuration
