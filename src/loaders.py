@@ -61,7 +61,7 @@ def load_body_from_planets(filename, dimension=3, indexes=None):
             velocity=random_rotation.apply(inclination_rotation.apply(max_velocity))
             
             colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-            body = Body(name, colour, float(mass), float(radius), position, velocity)
+            body = Body(name, colour, float(mass), float(radius), position[:dimension], velocity[:dimension])
             bodies.append(body)
     return bodies
 

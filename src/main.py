@@ -26,7 +26,7 @@ def main():
     #system_from_file("2025-06-05_16-01-10.csv", dimension=3) # 3D load test
     #figure_eight_configureation(False)
     #user_input()
-    system_from_user_input(['Sun', 'Earth', 'Mars'], animate=True, simualtion_parameters=Simualtion_parameters(dimension=2), animation_parameters=Animation_parameters(plot_dimension=2))
+    system_from_user_input(['Sun', 'Rocket'], animate=True, dimension=2, simulation_parameters=Simulation_parameters(dimension=2), animation_parameters=Animation_parameters(plot_dimension=2, plot_axis_limits=4))
     
 #write_body_to_file()
 

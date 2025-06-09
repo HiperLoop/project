@@ -4,7 +4,7 @@ from body import Body
 from loaders import *
 from measures import *
 
-class Simualtion_parameters:
+class Simulation_parameters:
     def __init__(self, **kwargs):
         self.dimension = kwargs.get('dimension', 3)
 
