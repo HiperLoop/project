@@ -42,13 +42,13 @@ def load_body_from_csv(filename, dimension=2):
             bodies.append(body)
         return bodies
 
-def load_body_from_planets(filename, dimension=3, indexes=None):
+def load_body_from_planets(filename, dimension=3, do_indexes=False, indexes=None):
     """Load body data from a CSV file with the following format: 
     Name,Mass (10^24 kg),Radius (km),Perihelion (10^6 km),Max Orbital Velocity (km/s),Orbit Inclination (deg),Orbit Eccentricity"""
     text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
     bodies = []
     for i, row in enumerate(text_bodies):
-        if not(indexes and i not in indexes):
+        if (do_indexes and i in indexes) or (not do_indexes):
             name = row[0]
             mass = row[1]
             radius = float(row[2])
@@ -65,12 +65,12 @@ def load_body_from_planets(filename, dimension=3, indexes=None):
             bodies.append(body)
     return bodies
 
-def load_body_from_custom_csv(filename, dimension=3, indexes=None):
+def load_body_from_custom_csv(filename, dimension=3, do_indexes=False, indexes=None):
     """Load body data from a CSV file."""
     text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
     bodies = []
     for i, row in enumerate(text_bodies):
-        if not(indexes and i not in indexes):
+        if (do_indexes and i in indexes) or (not do_indexes):
             name = row[0]
             mass = row[1]
             radius = float(row[2])/2
@@ -93,9 +93,9 @@ def load_boadies_by_name(names, dimension=3):
 
         loaded_bodies = []
         if filename == 'planets.csv':
-            loaded_bodies = load_body_from_planets(filename, indexes=file_body_indexes, dimension=dimension)
+            loaded_bodies = load_body_from_planets(filename, do_indexes=True, indexes=file_body_indexes, dimension=dimension)
         elif filename == 'custom_objects.csv':
-            loaded_bodies = np.array(load_body_from_custom_csv(filename, indexes=file_body_indexes, dimension=dimension))
+            loaded_bodies = np.array(load_body_from_custom_csv(filename, do_indexes=True, indexes=file_body_indexes, dimension=dimension))
         bodies.extend(loaded_bodies)
     return bodies
 
