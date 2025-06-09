@@ -46,7 +46,7 @@ def create_solar_system():
     return solar_system
 
 def solar_system():
-    create_solar_system.run()
+    create_solar_system().run()
 
 '''These are just fun to see, we found these initial values online and it is one of the very few non-trivial stable solutions to the three body problem.'''
 def figure_eight_configureation(animate=True):
@@ -69,4 +69,4 @@ def system_from_user_input(body_names, **kwargs):
     user_system = System(animate = kwargs.get('animate', False), name="user name", bodies=load_boadies_by_name(body_names), simualtion_parameters=kwargs.get('simulation_paramaters', None), animation_parameters=kwargs.get('animation_parameters', None))
     user_system.run()
 
-pre_made_systems = [("Solar system", solar_system())]
+pre_made_systems = {"Solar system": solar_system}
