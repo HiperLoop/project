@@ -6,8 +6,21 @@ def ask_animation_parameters():
 def user_input():
     # print program functionality
     print("Welcome! This is a program that simulates and animates the gravity of n bodies.")
-    if(input('Do you want to simulate from the Scratch or animate from a file (s/a)')=='a'):
-       animate_from_file(input('Please enter the file name: '), ask_animation_parameters())
+    sOrA=input('Do you want to simulate from the Scratch or animate from a file (s/a)') 
+    if(sOrA=='a'):
+        animate_from_file(input('Please enter the file name: '), ask_animation_parameters())
+    elif(sOrA=='s'):
+        sim_param=Simualtion_parameters(dimension=int(input('Please enter the number of dimensions you want to animate (2/3): ')), step_precision=int(input('Please enter the step precision: ')), step_time=float(input('Please enter the step time: ')))
+        preOrOwn=input('Do you want to simulate one of the premade systems or choose objects out of the files? (pre/own)')
+        if (preOrOwn=='pre'):
+            eval(input())
+        elif(preOrOwn=='own'):
+            planets=(input('please write the planets as they are named in one of the .csv files that you want to use seperated by a comma: ')).split(',')
+            if((input('Do you want to animate your simulation simoultaneosly? (y/n): '))=='y'):
+                anim_param=ask_animation_parameters
+                system_from_user_input(planets, sim_param, anim_param, animate=True)
+            else:
+                system_from_user_input(planets, sim_param)
     
 
 def main():
