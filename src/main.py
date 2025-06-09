@@ -1,4 +1,5 @@
 from systems import *
+
 def ask_animation_parameters():
     """Asks the user for the animation parameters that should be used for running the Animation"""
     animation_parameters=Animation_parameters(plot_axis_limits=float(input('Please enter the length of the plot limits in the normed value (normally AU): ')), frame_rate=int(input('Please enter the framerate as an Integer: ')))
@@ -33,7 +34,7 @@ def user_input():
                 anim_param=ask_animation_parameters()
                 print(sim_param.dimension)
                 anim_param.plot_dimension=int(sim_param.dimension)
-                system_from_user_input(planets, simualtion_parameters=sim_param, animation_parameters=anim_param, animate=True)
+                system_from_user_input(planets, simulation_parameters=sim_param, animation_parameters=anim_param, animate=True)
             else:
                 system_from_user_input(planets, simulation_parameters=sim_param)
     
