@@ -3,6 +3,7 @@ import random
 from body import Body
 from datetime import datetime, date
 from scipy.spatial.transform import Rotation as R
+import os
 
 OBJECTS_PATH = "./objects/"
 SIMULATIONS_PATH = "./simulations/"
@@ -41,43 +42,65 @@ def load_body_from_csv(filename, dimension=2):
             bodies.append(body)
         return bodies
 
-def load_body_from_planets(filename, dimension=3):
+def load_body_from_planets(filename, dimension=3, indexes=None):
     """Load body data from a CSV file with the following format: 
     Name,Mass (10^24 kg),Radius (km),Perihelion (10^6 km),Max Orbital Velocity (km/s),Orbit Inclination (deg),Orbit Eccentricity"""
     text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
     bodies = []
-    for row in text_bodies:
-        name = row[0]
-        mass = row[1]
-        radius = float(row[2])
-        position = np.array([float(row[3]),0,0])
-        max_velocity = np.array([0,float(row[4]),0])
-        #Rotate the position according to the inclination and setting it somewhere random around the sun
-        inclination_rotation = R.from_euler('y', float(row[5]), degrees=True)
-        random_rotation = R.from_euler('z', np.random.rand()*360, degrees=True)
-        position=random_rotation.apply(inclination_rotation.apply(position))
-        velocity=random_rotation.apply(inclination_rotation.apply(max_velocity))
-        
-        colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-        body = Body(name, colour, float(mass), float(radius), position, velocity)
-        bodies.append(body)
+    for i, row in enumerate(text_bodies):
+        if not(indexes and i not in indexes):
+            name = row[0]
+            mass = row[1]
+            radius = float(row[2])
+            position = np.array([float(row[3]),0,0])
+            max_velocity = np.array([0,float(row[4]),0])
+            #Rotate the position according to the inclination and setting it somewhere random around the sun
+            inclination_rotation = R.from_euler('y', float(row[5]), degrees=True)
+            random_rotation = R.from_euler('z', np.random.rand()*360, degrees=True)
+            position=random_rotation.apply(inclination_rotation.apply(position))
+            velocity=random_rotation.apply(inclination_rotation.apply(max_velocity))
+            
+            colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+            body = Body(name, colour, float(mass), float(radius), position, velocity)
+            bodies.append(body)
     return bodies
 
-def load_body_from_custom_csv(filename, dimension=2):
+def load_body_from_custom_csv(filename, dimension=3, indexes=None):
     """Load body data from a CSV file."""
     text_bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)[1:]
     bodies = []
-    for row in text_bodies:
-        name = row[0]
-        mass = row[1]
-        radius = float(row[2])/2
-        colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-        position = np.array([float(col) for col in row[3:3+dimension]])
-        velocity = np.array([float(col) for col in row[6:6+dimension]])
-        body = Body(name, colour, float(mass), float(radius), position, velocity)
-        bodies.append(body)
+    for i, row in enumerate(text_bodies):
+        if not(indexes and i not in indexes):
+            name = row[0]
+            mass = row[1]
+            radius = float(row[2])/2
+            colour = "#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+            position = np.array([float(col) for col in row[3:3+dimension]])
+            velocity = np.array([float(col) for col in row[6:6+dimension]])
+            body = Body(name, colour, float(mass), float(radius), position, velocity)
+            bodies.append(body)
     return bodies
-     
+
+def load_boadies_by_name(names):
+    files = os.listdir(OBJECTS_PATH)
+    bodies = []
+    for filename in files:
+        file_body_indexes = []
+        body_names = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=str, encoding=None)[1:, 0]
+        for name in names:
+            if name in body_names:
+                names.remove(name)
+                print("found body")
+                file_body_indexes.append(np.where(body_names == name)[0])
+
+        loaded_bodies = []
+        if filename == 'planets.csv':
+            loaded_bodies = load_body_from_planets(filename, indexes=file_body_indexes)
+        elif filename == 'custom_objects.csv':
+            loaded_bodies = np.array(load_body_from_custom_csv(filename, indexes=file_body_indexes))
+        bodies.extend(loaded_bodies)
+    return bodies
+
 def write_simulation_to_file_step(file, bodies):
     """Write the current state of the simulation to a CSV file. DOES NOT CLOSE FILE!"""
     dimension = Body.dimension
