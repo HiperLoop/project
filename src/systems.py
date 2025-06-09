@@ -35,18 +35,18 @@ def animate_from_file(file_name, animation_values=Animation_parameters(plot_axis
     sys = System(animate=True, from_file=True, animation_parameters=animation_values, file_name=file_name)
     sys.run()
 
-def create_solar_system():
+def create_solar_system(animate=True, ani_params=Animation_parameters(plot_axis_limits=40, plot_dimension=3, frame_rate=40)):
     """Configure the simulation for the solar system."""
     # Load planets from the CSV file
     planets = load_body_from_planets('planets.csv')
     #load Sun from the custom CSV file
     sun = load_body_from_custom_csv('custom_objects.csv', dimension=3)[0]
     bodies = [sun] + planets
-    solar_system = System(animate=True, from_file=False, name="Solar system", bodies=bodies, simulation_parameters=Simualtion_parameters(dimension=3, do_norming=True, step_time=0.1, precision=10, step_iterations=100000), animation_parameters=Animation_parameters(plot_axis_limits=40, plot_dimension=3, frame_rate=40))
+    solar_system = System(animate=animate, from_file=False, name="Solar system", bodies=bodies, simulation_parameters=Simualtion_parameters(dimension=3, do_norming=True, step_time=0.1, precision=10, step_iterations=100000), animation_parameters=ani_params)
     return solar_system
 
-def solar_system():
-    create_solar_system().run()
+def solar_system(animate, ani_params):
+    create_solar_system(animate, ani_params).run()
 
 '''These are just fun to see, we found these initial values online and it is one of the very few non-trivial stable solutions to the three body problem.'''
 def figure_eight_configureation(animate=True):
