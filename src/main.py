@@ -10,12 +10,12 @@ def user_input():
     sOrA=input('Do you want to simulate from the scratch or animate from a file (s/a)') 
     if(sOrA=='a'):
         anim_param=ask_animation_parameters()
-        anim_param.plot_dimension=int(input('How many dimensions do you want to animate? (2/3): '))
+        anim_param.plot_dimension=int(input('How many dimensions do you want to animates? (2/3): '))
         animate_from_file(input('Please enter the file name: '), anim_param)
     elif(sOrA=='s'):
-        sim_param=Simualtion_parameters()
+        sim_param=Simulation_parameters()
         if(input('Do you want to use the standard simulation parameters? (y/n): ')=='n'):
-            sim_param=Simualtion_parameters(dimension=int(input('Please enter the number of dimensions you want to simulate (2/3): ')), step_precision=int(input('Please enter the step precision: ')), step_time=float(input('Please enter the step time: ')))
+            sim_param=Simulation_parameters(dimension=int(input('Please enter the number of dimensions you want to simulate (2/3): ')), step_precision=int(input('Please enter the step precision: ')), step_time=float(input('Please enter the step time: ')))
         preOrOwn=input('Do you want to simulate one of the premade systems or choose objects out of the files? (pre/own)')
         if (preOrOwn=='pre'):
             print("The currently available systems are: ")
@@ -34,9 +34,9 @@ def user_input():
                 anim_param=ask_animation_parameters()
                 print(sim_param.dimension)
                 anim_param.plot_dimension=int(sim_param.dimension)
-                system_from_user_input(planets, simulation_parameters=sim_param, animation_parameters=anim_param, animate=True)
+                system_from_user_input(planets, dimension=sim_param.dimension, simulation_parameters=sim_param, animation_parameters=anim_param, animate=True)
             else:
-                system_from_user_input(planets, simulation_parameters=sim_param)
+                system_from_user_input(planets, dimension=sim_param.dimension, simulation_parameters=sim_param)
     
 
 def main():
