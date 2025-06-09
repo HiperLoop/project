@@ -3,7 +3,7 @@ import numpy as np
 class Body:
     """Class representing a celestial body with mass, radius, position, and velocity."""
 
-    dimension = 2  # Number of dimensions (3D space)
+    dimension = 3  # Number of dimensions (3D space)
 
     def __init__(self, name, colour, mass, radius, position, velocity):
         self.name = name

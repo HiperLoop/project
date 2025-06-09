@@ -6,7 +6,7 @@ from measures import *
 
 class Simualtion_parameters:
     def __init__(self, **kwargs):
-        self.dimension = kwargs.get('dimension', 2)
+        self.dimension = kwargs.get('dimension', 3)
 
         self.do_norming = kwargs.get('do_norming', True)
         self.distance_norm = kwargs.get('distance_norm', 149.6)
