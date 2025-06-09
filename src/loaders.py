@@ -89,7 +89,6 @@ def load_boadies_by_name(names):
         body_names = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=str, encoding=None)[1:, 0]
         for name in names:
             if name in body_names:
-                names.remove(name)
                 file_body_indexes.append(np.where(body_names == name)[0])
 
         loaded_bodies = []
