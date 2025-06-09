@@ -15,7 +15,7 @@ class System:
             if animate:
                 self.animation = Animation(animation_params, data_from_file=True, file_name=kwargs.get('file_name', None))
         else:
-            self.sim = Simulation(kwargs.get('bodies', None), simulation_params, reverse=False, save_to_file=True, auto_run=not animate)
+            self.sim = Simulation(kwargs.get('bodies', None), simulation_params, reverse=False, save_to_file=kwargs.get('save_to_file', True), auto_run=not animate)
             if animate:
                 self.animation = Animation(animation_params, simulation=self.sim)
     
@@ -65,8 +65,8 @@ def figure_eight_configureation_3D():
     # Initialize the animation
     anim = Animation(simulation=sim, plot_size=6, plot_dimensions=1.5, frame_rate=100)
 
-def system_from_user_input(body_names):
-    user_system = System(name="user name", bodies=load_boadies_by_name(body_names))
+def system_from_user_input(body_names, **kwargs):
+    user_system = System(animate = kwargs.get('animate', False), name="user name", bodies=load_boadies_by_name(body_names), simualtion_parameters=kwargs.get('simulation_paramaters', None), animation_parameters=kwargs.get('animation_parameters', None))
     user_system.run()
 
 pre_made_systems = [("Solar system", solar_system())]
