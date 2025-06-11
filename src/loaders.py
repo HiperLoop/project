@@ -116,7 +116,7 @@ def write_simulation_to_file_step_y(file, y):
     write_row = ("\n".join([",".join([",".join([str(number) for number in np.concatenate([y[i, j*dimension:(j+1)*dimension] if dimension == 3 else np.append(y[i, j*dimension:(j+1)*dimension], 0), y[i, j*dimension+dimension:(j+1)*dimension+dimension] if dimension == 3 else np.append(y[i, j*dimension+dimension:(j+1)*dimension+dimension], 0)])]) for j in range(number_of_bodies)]) for i in range(y.shape[0])]))
     file.write(write_row + "\n")
      
-def write_simulation_to_file_init(bodies):
+def write_simulation_to_file_init(bodies, params):
     """"Initialize the .cvs file and write the header."""
     now = datetime.now()
     current_time = now.strftime("%H-%M-%S")
@@ -126,9 +126,13 @@ def write_simulation_to_file_init(bodies):
     file = open(file_name, "w")
     file.write("# ================================================================================================\n")
     file.write("#  This file contains the simulation data for a simulation of gravity between n bodies \n")
-    file.write("#  The first line contains the defining charachterisitics of the bodies with 6 columns for each\n")
+    file.write("#  This first line contains the simulation parameters \n")
+    file.write("#  The second line contains the defining charachterisitics of the bodies with 6 columns for each\n")
     file.write("#  Every subsequent line contains their position and velocities \n")
     file.write("# ================================================================================================\n")
+    file.write("#\n")
+    file.write("#" + "precision,step size,iterations,_,_,_," * len(bodies) + "\n")
+    file.write((f"{params[0]},{params[1]},{params[2]},0,0,0," * len(bodies))[:-1] + "\n")
     file.write("#\n")
     file.write("#" + "name,mass,radius,colour,_,_," * len(bodies) + "\n")
     file.write(",".join([f"{body.name},{body.mass},{body.radius},{body.display_colour[1:]},0,0" for body in bodies]) + "\n")
