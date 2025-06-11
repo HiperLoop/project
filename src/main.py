@@ -21,13 +21,13 @@ def user_input():
             print("The currently available systems are: ")
             for system in pre_made_systems:
                 print (system)
-                used_system=input('Please enter the name of the system you want to use: ')
-                if((input('Do you want to animate your simulation simoultaneosly? (y/n): '))=='y'):
-                    anim_param=ask_animation_parameters()
-                    animate=True
-                else:
-                    animate=False
-                pre_made_systems[used_system](animate, anim_param)
+            used_system=input('Please enter the name of the system you want to use: ')
+            if((input('Do you want to animate your simulation simoultaneosly? (y/n): '))=='y'):
+                anim_param=ask_animation_parameters()
+                animate=True
+            else:
+                animate=False
+            pre_made_systems[used_system](animate, anim_param)
         elif(preOrOwn=='own'):
             planets=(input('please write the planets as they are named in one of the .csv files that you want to use seperated by a comma: ')).split(',')
             if((input('Do you want to animate your simulation simoultaneosly? (y/n): '))=='y'):
