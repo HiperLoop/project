@@ -3,6 +3,7 @@ from scipy.integrate import solve_ivp
 from body import Body
 from loaders import *
 from measures import *
+from measures import Kepler
 
 class Simulation_parameters:
     def __init__(self, **kwargs):
@@ -40,15 +41,16 @@ class Simulation:
         self.unit_norming = parameters.do_norming  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
 
-        self.angles = np.zeros((len(bodies), 3))
-
         if reverse: self.reverse_velocities() # reverse velocities to run simulation backwards
 
         # file saving parameters
         self.save_to_file = save_to_file
         if save_to_file: 
-            self.file_name = write_simulation_to_file_init(self.bodies, [parameters.step_precision, parameters.step_time, parameters.step_iterations])
+            self.file_name = write_simulation_to_file_init(self.bodies, [parameters.dimension, parameters.step_precision, parameters.step_time, parameters.step_iterations])
             self.file = open(self.file_name, "a")
+
+        # running Kepler calculation
+        self.kepler_law_calc = Kepler(num_of_bodies=len(bodies))
 
         # running without animation
         if auto_run:
@@ -137,23 +139,6 @@ class Simulation:
         self.COM_vel = self.COM_velocity()
         self.relative_velocities(self.COM_vel)
     # endregion #################################### Norming #################################################
-    
-    # region #################################### Kepler #####################################################
-    def calculate_period(self, n, body, distance):
-        self.angles[n][0] = calculate_angle(body, distance)
-        if self.angles[n][0] >= self.angles[n][1] and self.angles[n][1] < self.angles[n][2]:
-            if body.period == 0:
-                body.period = (self.current_step - 1) * self.time_step
-                body.semimajor_axis = (body.min_distance + body.max_distance) / 2
-        self.angles[n][2] = self.angles[n][1]
-        self.angles[n][1] = self.angles[n][0]
-
-    def calculate_Kepler(self):
-        for n, body in enumerate(self.bodies):
-            distance = np.linalg.norm(body.position)
-            update_limit_distances(body, distance)
-            self.calculate_period(n, body, distance)
-    # endregion #################################### Kepler ##################################################
             
     def solve_velocities(self, start):
         """Solve the equations of motion for the bodies using the Runge-Kutta method."""
@@ -179,8 +164,8 @@ class Simulation:
         t_span = (0, self.time_step)
         t_evals = np.arange(start, self.time_step, self.calculation_step)
         result = solve_ivp(equations_of_motion, t_span=t_span, t_eval=t_evals, y0=initial_conditions, vectorized=True)
-        if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
-        self.calculate_Kepler()
+        self.kepler_law_calc.calculate_Kepler(self.bodies, self.current_step, self.time_step)
+        if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
         return result
 
     def reverse_velocities(self):
@@ -194,7 +179,7 @@ class Simulation:
         print("Simulation started")
         while self.current_step < self.iterations:
             self.solve_velocities(0)
-            if self.current_step % (self.iterations//100) == 0:
+            if self.current_step % (self.iterations//1000) == 0:
                 print(f'{self.current_step / (self.iterations//100)}% done')
         for body in self.bodies:
             print(f'{body.name} has period: {body.period} and semi-major axis: {body.semimajor_axis}')
