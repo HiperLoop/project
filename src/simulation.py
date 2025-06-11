@@ -85,6 +85,7 @@ class Simulation:
                     accs[j] += self.twoBody_acceleration(body2, body1)
         return accs
     # endregion #################################### Accelerations ###########################################
+    
     # region #################################### Norming ####################################################
     def normMasses(self):
         """Normalize the masses of the bodies to a common scale."""

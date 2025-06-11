@@ -4,8 +4,7 @@ from animation import Animation, Animation_parameters
 from measures import *
 
 class System:
-    '''class to store the simulation system'''
-
+    '''class to store predefined simulation systems such as the solar system'''
     def __init__(self, animate=True, from_file=False, **kwargs):
         animation_params = kwargs.get('animation_parameters', Animation_parameters())
         simulation_params = kwargs.get('simulation_parameters', Simulation_parameters())
