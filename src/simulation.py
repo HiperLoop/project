@@ -137,7 +137,8 @@ class Simulation:
         self.COM_vel = self.COM_velocity()
         self.relative_velocities(self.COM_vel)
     # endregion #################################### Norming #################################################
-
+    
+    # region #################################### Kepler #####################################################
     def calculate_period(self, n, body, distance):
         self.angles[n][0] = calculate_angle(body, distance)
         if self.angles[n][0] >= self.angles[n][1] and self.angles[n][1] < self.angles[n][2]:
@@ -152,6 +153,7 @@ class Simulation:
             distance = np.linalg.norm(body.position)
             update_limit_distances(body, distance)
             self.calculate_period(n, body, distance)
+    # endregion #################################### Kepler ##################################################
             
     def solve_velocities(self, start):
         """Solve the equations of motion for the bodies using the Runge-Kutta method."""
