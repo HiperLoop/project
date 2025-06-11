@@ -2,7 +2,8 @@ from systems import *
 
 def ask_animation_parameters():
     """Asks the user for the animation parameters that should be used for running the Animation"""
-    animation_parameters=Animation_parameters(plot_axis_limits=float(input('Please enter the length of the plot limits in the normed value (normally AU): ')), frame_rate=int(input('Please enter the framerate as an Integer: ')))
+    animation_parameters=Animation_parameters(plot_axis_limits=float(input('Please enter the length of the plot limits in the normed value (normally AU): ')), 
+                                              frame_rate=int(input('Please enter the framerate as an Integer: ')))
     return(animation_parameters)
 def user_input():
     # print program functionality
@@ -15,7 +16,9 @@ def user_input():
     elif(sOrA=='s'):
         sim_param=Simulation_parameters()
         if(input('Do you want to use the standard simulation parameters? (y/n): ')=='n'):
-            sim_param=Simulation_parameters(dimension=int(input('Please enter the number of dimensions you want to simulate (2/3): ')), step_precision=int(input('Please enter the step precision: ')), step_time=float(input('Please enter the step time: ')))
+            sim_param=Simulation_parameters(dimension=int(input('Please enter the number of dimensions you want to simulate (2/3): ')), 
+                                            step_precision=int(input('Please enter the step precision: ')), 
+                                            step_time=float(input('Please enter the step time: ')))
         preOrOwn=input('Do you want to simulate one of the premade systems or choose objects out of the files? (pre/own)')
         if (preOrOwn=='pre'):
             print("The currently available systems are: ")
