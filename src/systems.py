@@ -37,7 +37,7 @@ def solar_system(animate=True, ani_params=Animation_parameters(plot_axis_limits=
     # load Sun from the custom CSV file
     sun = load_body_from_custom_csv('custom_objects.csv', dimension=3)[0]
     bodies = [sun] + planets
-    solar_system = System(animate=animate, from_file=False, name="Solar system", bodies=bodies, simulation_parameters=Simulation_parameters(dimension=3, do_norming=True, step_time=0.1, precision=10, step_iterations=100000), animation_parameters=ani_params)
+    solar_system = System(animate=animate, from_file=False, name="Solar system", bodies=bodies, simulation_parameters=Simulation_parameters(dimension=3, do_norming=True, step_time=0.1, precision=10, step_iterations=1000), animation_parameters=ani_params)
     solar_system.run()
 
 def figure_eight(animate=True, ani_params=Animation_parameters(plot_axis_limits=2, plot_dimensions=2, frame_rate=60)):

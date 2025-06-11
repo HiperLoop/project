@@ -25,6 +25,7 @@ def user_input():
             for system in pre_made_systems:
                 print (system)
             used_system=input('Please enter the name of the system you want to use: ')
+            anim_param=Animation_parameters()
             if((input('Do you want to animate your simulation simoultaneosly? (y/n): '))=='y'):
                 anim_param=ask_animation_parameters()
                 animate=True
