@@ -40,8 +40,8 @@ class Simulation:
         self.unit_norming = parameters.do_norming  # Whether to normalize units
         self.initial_norming()  # Normalize masses and calculate center of mass
 
-        self.initial_vector = relative_position(self.bodies[0], self.bodies[1]) # TODO: remove
-        self.angles = [0, 0, 0] # TODO: remove
+        #self.initial_vector = relative_position(self.bodies[0], self.bodies[1]) # TODO: remove
+        #self.angles = [0, 0, 0] # TODO: remove
 
         if reverse: self.reverse_velocities() # reverse velocities to run simulation backwards
 
@@ -68,8 +68,8 @@ class Simulation:
         r_vector = relative_position(body1, body2)
         distance = np.linalg.norm(r_vector)
         
-        if distance <= (10*(body1.radius + body2.radius)):
-            return np.zeros(body1.dimension)  # No force if bodies are at the same position
+        if distance <= ((body1.radius + body2.radius)):
+            return np.zeros(body1.dimension)  # No force if bodies would be touching, as this sometimes rockets the sun out
         
         accelration_magnitude = self.G * body2.mass / distance**2
         accelration_vector = (accelration_magnitude / distance) * r_vector
@@ -169,8 +169,7 @@ class Simulation:
         t_span = (0, self.time_step)
         t_evals = np.arange(start, self.time_step, self.calculation_step)
         result = solve_ivp(equations_of_motion, t_span=t_span, t_eval=t_evals, y0=initial_conditions, vectorized=True)
-        if self.save_to_file: write_simulation_to_file_step(self.file, self.bodies)
-        #if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
+        if self.save_to_file: write_simulation_to_file_step_y(self.file, result.y)
         #self.calculate_period()
         return result
 

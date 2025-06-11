@@ -44,8 +44,21 @@ def figure_eight(animate=True, ani_params=Animation_parameters(plot_axis_limits=
     system = System(animate=animate, from_file=False, name="Figure eight", bodies=load_body_from_custom_csv('custom_objects.csv', dimension=ani_params.plot_dimension)[-4:-1], simulation_parameters=Simulation_parameters(do_norming=False, dimension=ani_params.plot_dimension, gravitational_constant=3, step_time=0.1), animation_parameters=ani_params)
     system.run()
 
+def inner_solar_system_with_rogue(animate=True, ani_params=Animation_parameters(plot_axis_limits=10, plot_dimension=3, frame_rate=40)):
+    """Configure the simulation for the solar system."""
+    # Load planets from the CSV file
+    planets = load_body_from_planets('planets.csv')[:4]
+    # load Sun from the custom CSV file
+    sun = load_body_from_custom_csv('custom_objects.csv', dimension=3)[0]
+    rogue= load_body_from_custom_csv('custom_objects.csv', dimension=3)[1]
+    bodies = [sun] + [rogue] + planets
+    inner_solar_system_with_rogue = System(animate=animate, from_file=False, name="Inner Solar System with rogue", bodies=bodies, 
+                                           simulation_parameters=Simulation_parameters(dimension=3, do_norming=True, step_time=0.1, precision=10, step_iterations=100000), 
+                                           animation_parameters=ani_params)
+    inner_solar_system_with_rogue.run()
+
 def system_from_user_input(body_names, **kwargs):
     user_system = System(animate = kwargs.get('animate', False), name="user name", bodies=load_boadies_by_name(body_names, dimension=kwargs.get('dimension', 3)), simulation_parameters=kwargs.get('simulation_parameters', Simulation_parameters()), animation_parameters=kwargs.get('animation_parameters', Animation_parameters()))
     user_system.run()
 
-pre_made_systems = {"Solar system": solar_system, "Figure eight":figure_eight}
+pre_made_systems = {"Solar system": solar_system, "Figure eight": figure_eight, "ISS rogue": inner_solar_system_with_rogue}

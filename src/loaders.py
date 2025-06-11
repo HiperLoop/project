@@ -112,7 +112,7 @@ def write_simulation_to_file_step(file, bodies):
 def write_simulation_to_file_step_y(file, y):
     """Write the current state of the simulation to a CSV file. DOES NOT CLOSE FILE!"""
     dimension = Body.dimension
-    number_of_bodies = y.shape[1] // (dimension*2)
+    number_of_bodies = y.shape[0] // (dimension*2)
     write_row = ("\n".join([",".join([",".join([str(number) for number in np.concatenate([y[i, j*dimension:(j+1)*dimension] if dimension == 3 else np.append(y[i, j*dimension:(j+1)*dimension], 0), y[i, j*dimension+dimension:(j+1)*dimension+dimension] if dimension == 3 else np.append(y[i, j*dimension+dimension:(j+1)*dimension+dimension], 0)])]) for j in range(number_of_bodies)]) for i in range(y.shape[0])]))
     file.write(write_row + "\n")
      
