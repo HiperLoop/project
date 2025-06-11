@@ -113,9 +113,21 @@ def write_simulation_to_file_step_y(file, y):
     """Write the current state of the simulation to a CSV file. DOES NOT CLOSE FILE!"""
     dimension = Body.dimension
     number_of_bodies = y.shape[0] // (dimension*2)
-    write_row = ("\n".join([",".join([",".join([str(number) for number in np.concatenate([y[i, j*dimension:(j+1)*dimension] if dimension == 3 else np.append(y[i, j*dimension:(j+1)*dimension], 0), y[i, j*dimension+dimension:(j+1)*dimension+dimension] if dimension == 3 else np.append(y[i, j*dimension+dimension:(j+1)*dimension+dimension], 0)])]) for j in range(number_of_bodies)]) for i in range(y.shape[0])]))
-    file.write(write_row + "\n")
-     
+
+    write_row = ""
+    print(number_of_bodies*dimension)
+    for i in range((y.shape[1]) - 1):
+        positions = y[:number_of_bodies * dimension].reshape((number_of_bodies, dimension))
+        velocities = y[number_of_bodies * dimension:].reshape((number_of_bodies, dimension))
+        
+        # Update positions
+        for i in range(number_of_bodies):
+            write_row += ",".join(positions[i]) + "," + ",".join(velocities[i]) + ","
+        write_row = write_row[:-1] + "\n"
+
+    #write_row = ("\n".join([",".join([",".join([str(number) for number in np.concatenate([y[i, j*dimension:(j+1)*dimension] if dimension == 3 else np.append(y[i, j*dimension:(j+1)*dimension], 0), y[i, j*dimension+dimension:(j+1)*dimension+dimension] if dimension == 3 else np.append(y[i, j*dimension+dimension:(j+1)*dimension+dimension], 0)])]) for j in range(number_of_bodies)]) for i in range(y.shape[1])]))
+    file.write(write_row)
+    
 def write_simulation_to_file_init(bodies, params):
     """"Initialize the .cvs file and write the header."""
     now = datetime.now()
@@ -131,8 +143,8 @@ def write_simulation_to_file_init(bodies, params):
     file.write("#  Every subsequent line contains their position and velocities \n")
     file.write("# ================================================================================================\n")
     file.write("#\n")
-    file.write("#" + "precision,step size,iterations,_,_,_," * len(bodies) + "\n")
-    file.write((f"{params[0]},{params[1]},{params[2]},0,0,0," * len(bodies))[:-1] + "\n")
+    file.write("#" + "dimension,precision,step size,iterations,_,_," * len(bodies) + "\n")
+    file.write((f"{params[0]},{params[1]},{params[2]},{params[3]},0,0," * len(bodies))[:-1] + "\n")
     file.write("#\n")
     file.write("#" + "name,mass,radius,colour,_,_," * len(bodies) + "\n")
     file.write(",".join([f"{body.name},{body.mass},{body.radius},{body.display_colour[1:]},0,0" for body in bodies]) + "\n")
@@ -143,14 +155,15 @@ def write_simulation_to_file_init(bodies, params):
     file.close()
     return file_name
 
-def load_simulation_from_file(filename, dimension=2):
+def load_simulation_from_file(filename, dimension=3):
     """Load simulation data from a CSV file."""
-    text_bodies = np.genfromtxt(SIMULATIONS_PATH+filename, delimiter=',', dtype=float, encoding=None)
+    text_bodies = np.genfromtxt(SIMULATIONS_PATH+filename, delimiter=',', dtype=str, encoding=None)
     #print(text_bodies.shape)
     bodies = []
-    characteristics = np.genfromtxt(SIMULATIONS_PATH+filename, delimiter=',', dtype=str, encoding=None)[0]
-    initial_vectors = text_bodies[1]
-    vector_data = text_bodies[2:]
+    sim_data = text_bodies[0][:4]
+    characteristics = text_bodies[1]
+    initial_vectors = text_bodies[2]
+    vector_data = text_bodies[3:]
     vec_size = 6
     for i in range(len(characteristics) // vec_size):
         name = characteristics[i*vec_size]
@@ -161,4 +174,9 @@ def load_simulation_from_file(filename, dimension=2):
         velocity = np.array([float(initial_vectors[i*vec_size + j + dimension]) for j in range(dimension)])
         body = Body(name, colour, float(mass), float(radius), position, velocity)
         bodies.append(body)
-    return bodies, vector_data
+    return bodies, vector_data, sim_data
+
+def update_bodies_from_row(bodies, row, dimension):
+    for i, body in enumerate(bodies):
+        body.position = [float(row[(i*2) * 3 + j]) for j in range(dimension)]
+        body.velocity = [float(row[((i*2)+1) * 3 + j]) for j in range(dimension)]

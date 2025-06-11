@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from loaders import load_simulation_from_file
+from loaders import load_simulation_from_file, update_bodies_from_row
 from body import Body
 
 class Animation_parameters:
@@ -22,7 +22,7 @@ class Animation:
         if data_from_file:
             self.dimension = parameters.plot_dimension
             Body.dimension = self.dimension
-            self.bodies, self.data = load_simulation_from_file(kwargs.get('file_name', None), self.dimension)
+            self.bodies, self.data, self.sim_params = load_simulation_from_file(kwargs.get('file_name', None), self.dimension)
         else:
             self.simulation = kwargs.get('simulation', None)
             self.bodies = self.simulation.bodies
@@ -91,9 +91,7 @@ class Animation:
         if self.data_from_file:
             self.step = min(self.step, len(self.data) - 1)
             row = self.data[self.step]
-            for i, body in enumerate(self.bodies):
-                body.position = [float(row[(i*2) * 3 + j]) for j in range(self.dimension)]
-                body.velocity = [float(row[((i*2)+1) * 3 + j]) for j in range(self.dimension)]
+            update_bodies_from_row(self.bodies, row, self.dimension)
         # run simulation step to update
         else:
             continuous_evolve = self.simulation.solve_velocities(0).y
