@@ -8,11 +8,14 @@ def ask_animation_parameters():
 def user_input():
     # print program functionality
     print("Welcome! This is a program that simulates and animates the gravity of n bodies.")
-    sOrA=input('Do you want to simulate from the scratch or animate from a file (s/a)') 
-    if(sOrA=='a'):
-        anim_param=ask_animation_parameters()
-        anim_param.plot_dimension=int(input('How many dimensions do you want to animates? (2/3): '))
-        animate_from_file(input('Please enter the file name: '), anim_param)
+    sOrA=input('Do you want to simulate from scratch or from a file (s/f)') 
+    if(sOrA=='f'):
+        if((input('Do you want to animate your simulation? (y/n): '))=='y'):
+            anim_param=ask_animation_parameters()
+            anim_param.plot_dimension=int(input("How many dimensions do you want to animate? (2/3)"))
+            animate_from_file(input('Please enter the file name: '), anim_param)
+        else:
+            calculate_kepler_from_file((input('Please enter the file name: ')))
     elif(sOrA=='s'):
         sim_param=Simulation_parameters()
         if(input('Do you want to use the standard simulation parameters? (y/n): ')=='n'):
@@ -36,7 +39,6 @@ def user_input():
             planets=(input('please write the planets as they are named in one of the .csv files that you want to use seperated by a comma: ')).split(',')
             if((input('Do you want to animate your simulation simoultaneosly? (y/n): '))=='y'):
                 anim_param=ask_animation_parameters()
-                print(sim_param.dimension)
                 anim_param.plot_dimension=int(sim_param.dimension)
                 system_from_user_input(planets, dimension=sim_param.dimension, simulation_parameters=sim_param, animation_parameters=anim_param, animate=True)
             else:
