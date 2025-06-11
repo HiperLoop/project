@@ -5,18 +5,19 @@ from loaders import *
 from measures import *
 from measures import Kepler
 
+
 class Simulation_parameters:
     def __init__(self, **kwargs):
         self.dimension = kwargs.get('dimension', 3)
 
         self.do_norming = kwargs.get('do_norming', True)
-        self.distance_norm = kwargs.get('distance_norm', 149.6)
+        self.distance_norm = kwargs.get('distance_norm', 149.598023)
         self.velocity_norm = kwargs.get('velocity_norm', 29.8)
         self.gravitational_constant = kwargs.get('gravitational_constant', 1)
 
         self.step_precision = kwargs.get('step_precision', 100)
         self.step_time = kwargs.get('step_time', 0.01)
-        self.step_iterations = kwargs.get('step_iterations', 1000)
+        self.step_iterations = kwargs.get('step_iterations', 10000)
 
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""
