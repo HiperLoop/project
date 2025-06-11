@@ -10,6 +10,12 @@ class Body:
         self.display_colour = colour
         self.mass = mass
         self.radius = radius
+        self.min_distance = 0
+        self.max_distance = 0
+        self.initial_vector = np.array(position)
+        self.initial_vector_magnitude = 0
+        self.period = 0
+        self.semimajor_axis = 0
         self.position = np.array(position)
         self.velocity = np.array(velocity)
 
