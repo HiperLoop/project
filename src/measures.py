@@ -1,5 +1,5 @@
 import numpy as np
-from loaders import load_simulation_from_file, update_bodies_from_row
+from loaders import load_simulation_from_file, update_bodies_from_row,write_body_to_file_calc
 
 class Kepler:
 
@@ -55,9 +55,7 @@ class Kepler:
 
                         if i % ((precision * iterations)//100) == 0:
                                 print(f'{i / ((precision * iterations)//100)}% done')
-                for body in bodies:
-                        print(f'{body.name} has period: {body.period} and semi-major axis: {body.semimajor_axis}')
-
+                write_body_to_file_calc(bodies)
 
 def relative_position(body1, body2):
         """Calculate the relative position vector from body1 to body2."""

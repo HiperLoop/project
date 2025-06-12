@@ -7,6 +7,7 @@ import os
 
 OBJECTS_PATH = "./objects/"
 SIMULATIONS_PATH = "./simulations/"
+CALCULATIONS_PATH = "./calculations/"
 
 def write_body_to_file():
     """Write a single body's data to the file."""
@@ -26,6 +27,24 @@ def write_body_to_file():
 
     file = open(OBJECTS_PATH+'custom_objects.csv', "a")
     file.write(name + "," + mass + "," + diameter + "," + ",".join(pos) + "," + ",".join(vel) + "\n")
+
+def write_body_to_file_calc(bodies):
+    """Write the calculated values relevant for the results, namely Name, Period and Semi-major-axis into a file"""
+    now = datetime.now()
+    current_time = now.strftime("%H-%M-%S")
+    today = date.today()
+    file_name = f'{CALCULATIONS_PATH}calculated_values_{today}_{current_time}.csv'
+    file = open(file_name, "w")
+    file.write("# ================================================================================================\n")
+    file.write("#  This file contains the calculated data for a simulation  \n")
+    file.write("#  Every line contains name, orbital period, and semi-major axis of a body \n")
+    file.write("# ================================================================================================\n")
+    file.write("#\n")
+    file.write("#" + "Name,orbital_period,SMA\n")
+    for body in bodies:
+        file.write(f'{body.name}, {body.period}, {body.semimajor_axis}\n')
+    file.close()
+    return file_name
 
 def load_body_from_csv(filename, dimension=2):
         """Load body data from a CSV file."""
@@ -109,7 +128,7 @@ def write_simulation_to_file_step(file, bodies):
         write_row += (",".join([str(coord) for coord in np.append(position, velocity)])) + ("," if i != len(bodies)-1 else "")
     file.write(write_row + "\n")
 
-def write_simulation_to_file_step_y(file, y):
+'''def write_simulation_to_file_step_y(file, y):
     """Write the current state of the simulation to a CSV file. DOES NOT CLOSE FILE!"""
     dimension = Body.dimension
     number_of_bodies = y.shape[0] // (dimension*2)
@@ -126,7 +145,7 @@ def write_simulation_to_file_step_y(file, y):
         write_row = write_row[:-1] + "\n"
 
     #write_row = ("\n".join([",".join([",".join([str(number) for number in np.concatenate([y[i, j*dimension:(j+1)*dimension] if dimension == 3 else np.append(y[i, j*dimension:(j+1)*dimension], 0), y[i, j*dimension+dimension:(j+1)*dimension+dimension] if dimension == 3 else np.append(y[i, j*dimension+dimension:(j+1)*dimension+dimension], 0)])]) for j in range(number_of_bodies)]) for i in range(y.shape[1])]))
-    file.write(write_row)
+    file.write(write_row)'''
     
 def write_simulation_to_file_init(bodies, params):
     """"Initialize the .cvs file and write the header."""

@@ -182,8 +182,9 @@ class Simulation:
             self.solve_velocities(0)
             if self.current_step % (self.iterations//1000) == 0:
                 print(f'{self.current_step / (self.iterations//100)}% done')
-        for body in self.bodies:
-            print(f'{body.name} has period: {body.period} and semi-major axis: {body.semimajor_axis}')
+        write_body_to_file_calc(self.bodies)
+        #for body in self.bodies:
+        #    print(f'{body.name} has period: {body.period} and semi-major axis: {body.semimajor_axis}')
 
     def start(self):
         self.runner()
