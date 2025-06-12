@@ -1,26 +1,34 @@
 import matplotlib.pyplot as plt 
-from measures import *
 import numpy as np
-from loaders import *
-from animation import *
+from loaders import load_plot_data_from_csv
 
-def load_body_from_csv(filename, dimension=2):
-        """Load body data from a CSV file."""
-        bodies = np.genfromtxt(OBJECTS_PATH+filename, delimiter=',', dtype=None, encoding=None)
-        bodies = []
-        for row in bodies:
-            name = row[0]
-            T = row[1]
-            SMA = row[2]
-            bodies.append(body)
-        return bodies
+FIGURE_PATH = './plots/'
 
 def scplt(filename):
-    x = np.array([10**i for i in range (7)])
+    object_names, plot_data, label_data = load_plot_data_from_csv(filename=filename, norm=True, exclude_Sun=True)
+    P_squared = plot_data[:, 0]
+    SMA_cubed = plot_data[:, 1]
+    P_squared_label = label_data[:, 0]
+    SMA_cubed_label = label_data[:, 1]
+    bot = int(np.floor(np.log10(min(SMA_cubed))))
+    top = int(np.ceil(np.log10(max(SMA_cubed)))) + 1
+    print(bot)
+    print(top)
+    x = np.array([10**(i) for i in range(bot, top)])
+    y = x
+    #y = np.array([10**(i) for i in range (-2, 4)])
     fig = plt.figure()
+
+    planets = fig.add_subplot()
+    planets.plot(x, y, 'g--', zorder=0)
+    planets.scatter(P_squared, SMA_cubed, c='r', marker='d', zorder=1)
+    for i, txt in enumerate(object_names):
+        planets.annotate(txt, (P_squared[i], SMA_cubed[i]), xytext=(P_squared_label[i], SMA_cubed_label[i]))
+    planets.set_xscale("log")
+    planets.set_yscale("log")   
     
-    plot_size = parameters.plot_size
-    plot_dimensions = parameters.plot_axis_limits
-    ax = self.fig.add_subplot(projection='3d' if self.dimension == 3 else None)
-    fig.set_figheight(self.plot_size)
-    fig.set_figwidth(self.plot_size)
+    plt.savefig(FIGURE_PATH+filename[:-4]+"_figure.png", format='png')
+
+    plt.show()
+
+scplt('rogue.csv')
