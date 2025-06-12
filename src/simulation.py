@@ -12,7 +12,7 @@ class Simulation_parameters:
 
         self.do_norming = kwargs.get('do_norming', True)
         self.distance_norm = kwargs.get('distance_norm', 149.598023)
-        self.velocity_norm = kwargs.get('velocity_norm', 29.8)
+        self.velocity_norm = kwargs.get('velocity_norm', 29.78)
         self.gravitational_constant = kwargs.get('gravitational_constant', 1)
 
         self.step_precision = kwargs.get('step_precision', 100)
