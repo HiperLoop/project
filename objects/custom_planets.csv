@@ -1,2 +1,3 @@
+#Source for Halley: Park, R. & NASA. (n.d.). Small-Body Database lookup. Retrieved June 12, 2025, from https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=1P&view=VOPDA
 Name,Mass (10^24 kg),Radius (km),Perihelion (10^6 km),Max Orbital Velocity (km/s),Orbit Inclination (deg),Orbit Eccentricity, Semimajor axis (10^6 km)
 Halley, 2e-10,7.2,87.66,54.57,162.262,0.967,2668
