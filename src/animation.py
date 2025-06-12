@@ -1,3 +1,5 @@
+"""The animation file provides all the tools necessary to animate the simulations. Although we barely used this in the report, it was 
+really benificial for the understanding of what happens."""
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation

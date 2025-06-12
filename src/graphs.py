@@ -1,3 +1,5 @@
+"""graphs.py takes the .csv files that are created by the main program and makes the graph that we used in the lab report out of them. 
+This file can be called seperately from the rest of this project."""
 import matplotlib.pyplot as plt 
 import numpy as np
 from loaders import load_plot_data_from_csv
@@ -16,7 +18,6 @@ def scplt(filename):
     print(top)
     x = np.array([10**(i) for i in range(bot, top)])
     y = x
-    #y = np.array([10**(i) for i in range (-2, 4)])
     fig = plt.figure()
 
     planets = fig.add_subplot()

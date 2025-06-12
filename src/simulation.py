@@ -1,3 +1,4 @@
+"""simulation.py actually calculates the simulation and specifies the parameters necessery to do so."""
 import numpy as np
 from scipy.integrate import solve_ivp
 from body import Body
@@ -17,7 +18,7 @@ class Simulation_parameters:
 
         self.step_precision = kwargs.get('step_precision', 100)
         self.step_time = kwargs.get('step_time', 0.01)
-        self.step_iterations = kwargs.get('step_iterations', 10000)
+        self.step_iterations = kwargs.get('step_iterations', 100000)
 
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""

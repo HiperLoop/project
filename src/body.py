@@ -1,3 +1,4 @@
+"""Initialises the Body class"""
 import numpy as np
 
 class Body:

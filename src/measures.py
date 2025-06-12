@@ -1,3 +1,6 @@
+"""measures.py provides the program with the necessary functions that can be used to calculate angle or distance between to objects 
+or regarding the original position of the body."""
+
 import numpy as np
 from loaders import load_simulation_from_file, update_bodies_from_row,write_body_to_file_calc
 

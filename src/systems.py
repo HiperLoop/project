@@ -1,3 +1,4 @@
+"""The systems are the collection of bodies that is called by the simulation. This is also where the predefined systems are specified."""
 from loaders import *
 from simulation import Simulation, Simulation_parameters
 from animation import Animation, Animation_parameters

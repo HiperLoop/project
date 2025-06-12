@@ -1,3 +1,4 @@
+"""loaders.py interacts with the .csv files by writing in them and taking data out of them."""
 import numpy as np
 import random
 from body import Body
@@ -128,24 +129,6 @@ def write_simulation_to_file_step(file, bodies):
         write_row += (",".join([str(coord) for coord in np.append(position, velocity)])) + ("," if i != len(bodies)-1 else "")
     file.write(write_row + "\n")
 
-'''def write_simulation_to_file_step_y(file, y):
-    """Write the current state of the simulation to a CSV file. DOES NOT CLOSE FILE!"""
-    dimension = Body.dimension
-    number_of_bodies = y.shape[0] // (dimension*2)
-
-    write_row = ""
-    print(number_of_bodies*dimension)
-    for i in range((y.shape[1]) - 1):
-        positions = y[:number_of_bodies * dimension].reshape((number_of_bodies, dimension))
-        velocities = y[number_of_bodies * dimension:].reshape((number_of_bodies, dimension))
-        
-        # Update positions
-        for i in range(number_of_bodies):
-            write_row += ",".join(positions[i]) + "," + ",".join(velocities[i]) + ","
-        write_row = write_row[:-1] + "\n"
-
-    #write_row = ("\n".join([",".join([",".join([str(number) for number in np.concatenate([y[i, j*dimension:(j+1)*dimension] if dimension == 3 else np.append(y[i, j*dimension:(j+1)*dimension], 0), y[i, j*dimension+dimension:(j+1)*dimension+dimension] if dimension == 3 else np.append(y[i, j*dimension+dimension:(j+1)*dimension+dimension], 0)])]) for j in range(number_of_bodies)]) for i in range(y.shape[1])]))
-    file.write(write_row)'''
     
 def write_simulation_to_file_init(bodies, params):
     """"Initialize the .cvs file and write the header."""

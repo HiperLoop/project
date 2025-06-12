@@ -1,3 +1,5 @@
+"""main.py includes everything that is connected with the user. When the main file is called, the program starts as intended."""
+
 from systems import *
 
 def ask_animation_parameters():
@@ -6,7 +8,7 @@ def ask_animation_parameters():
                                               frame_rate=int(input('Please enter the framerate as an Integer: ')))
     return(animation_parameters)
 def user_input():
-    # print program functionality
+    """Works as the main function to guide the user throught the features of the program"""
     print("Welcome! This is a program that simulates and animates the gravity of n bodies.")
     sOrA=input('Do you want to simulate from scratch or from a file (s/f)') 
     if(sOrA=='f'):
