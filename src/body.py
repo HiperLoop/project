@@ -15,6 +15,7 @@ class Body:
         self.initial_vector = np.array(position)
         self.initial_vector_magnitude = 0
         self.period = 0
+        self.amount_period = 0
         self.semimajor_axis = 0
         self.position = np.array(position)
         self.velocity = np.array(velocity)
