@@ -199,4 +199,9 @@ def load_plot_data_from_csv(filename, norm=True, exclude_Sun=True):
         plot_data[i][1] = norm(float(row[2]), 3, 1) if norm else float(row[2])
         label_data[i][0] = norm(float(row[1]) * 1.2, 2) if norm else float(row[1])
         label_data[i][1] = norm(float(row[2]) * 0.9, 3, 1) if norm else float(row[2])
+
+        #uncomment for rogue venus shift
+        #if i == 2:
+            #label_data[i][0] = norm(float(row[1]) * 0.95, 2) if norm else float(row[1])
+            #label_data[i][1] = norm(float(row[2]) * 0.8, 3, 1) if norm else float(row[2])
     return labels, plot_data, label_data

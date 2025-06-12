@@ -28,7 +28,11 @@ def scplt(filename):
     planets.set_xscale("log")
     planets.set_yscale("log")   
     
-    plt.savefig(FIGURE_PATH+filename[:-4]+"_figure.png", format='png')
+    plt.title("Solar system with a rogue planet")
+    plt.xlabel("Period squared [Earth year]")
+    plt.ylabel("Semi-major axis cubed [AU]")
+
+    plt.savefig(FIGURE_PATH+filename[:-4]+"_figure.svg", format='svg')
 
     plt.show()
 
