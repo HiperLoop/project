@@ -5,18 +5,19 @@ from loaders import *
 from measures import *
 from measures import Kepler
 
+
 class Simulation_parameters:
     def __init__(self, **kwargs):
         self.dimension = kwargs.get('dimension', 3)
 
         self.do_norming = kwargs.get('do_norming', True)
-        self.distance_norm = kwargs.get('distance_norm', 149.6)
+        self.distance_norm = kwargs.get('distance_norm', 149.598023)
         self.velocity_norm = kwargs.get('velocity_norm', 29.8)
         self.gravitational_constant = kwargs.get('gravitational_constant', 1)
 
         self.step_precision = kwargs.get('step_precision', 100)
         self.step_time = kwargs.get('step_time', 0.01)
-        self.step_iterations = kwargs.get('step_iterations', 1000)
+        self.step_iterations = kwargs.get('step_iterations', 10000)
 
 class Simulation:
     """Class for simulating gravitational interactions between n bodies."""
@@ -181,8 +182,9 @@ class Simulation:
             self.solve_velocities(0)
             if self.current_step % (self.iterations//1000) == 0:
                 print(f'{self.current_step / (self.iterations//100)}% done')
-        for body in self.bodies:
-            print(f'{body.name} has period: {body.period} and semi-major axis: {body.semimajor_axis}')
+        write_body_to_file_calc(self.bodies)
+        #for body in self.bodies:
+        #    print(f'{body.name} has period: {body.period} and semi-major axis: {body.semimajor_axis}')
 
     def start(self):
         self.runner()

@@ -1,5 +1,5 @@
 import numpy as np
-from loaders import load_simulation_from_file, update_bodies_from_row
+from loaders import load_simulation_from_file, update_bodies_from_row,write_body_to_file_calc
 
 class Kepler:
 
@@ -18,9 +18,11 @@ class Kepler:
         def calculate_period(self, n, body, distance, current_step, time_step):
                 self.angles[n][0] = self.calculate_angle(body, distance)
                 if self.angles[n][0] >= self.angles[n][1] and self.angles[n][1] < self.angles[n][2]:
-                        if body.period == 0:
-                                body.period = (current_step - 1) * time_step
-                                body.semimajor_axis = (body.min_distance + body.max_distance) / 2
+                        body.amount_period +=1
+                        body.period = (body.period+(current_step - 1)/body.amount_period* time_step/body.amount_period)/(1+1/body.amount_period)
+                        body.semimajor_axis = (body.min_distance + body.max_distance) / 2
+                        if body.amount_period == 1: 
+                                body.period *= 2
                 self.angles[n][2] = self.angles[n][1]
                 self.angles[n][1] = self.angles[n][0]
 
@@ -53,9 +55,7 @@ class Kepler:
 
                         if i % ((precision * iterations)//100) == 0:
                                 print(f'{i / ((precision * iterations)//100)}% done')
-                for body in bodies:
-                        print(f'{body.name} has period: {body.period} and semi-major axis: {body.semimajor_axis}')
-
+                write_body_to_file_calc(bodies)
 
 def relative_position(body1, body2):
         """Calculate the relative position vector from body1 to body2."""
