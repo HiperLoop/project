@@ -199,3 +199,21 @@ def update_bodies_from_row(bodies, row, dimension):
     for i, body in enumerate(bodies):
         body.position = [float(row[(i*2) * 3 + j]) for j in range(dimension)]
         body.velocity = [float(row[((i*2)+1) * 3 + j]) for j in range(dimension)]
+
+def load_plot_data_from_csv(filename, norm=True, exclude_Sun=True):
+    """Load body data from a CSV file."""
+
+    def norm(data, exponent, divide=(2*np.pi)):
+        return (data/divide)**exponent
+        
+    str_data = np.genfromtxt(CALCULATIONS_PATH+filename, delimiter=',', dtype=str, encoding=None)[1 if exclude_Sun else 0:]
+    plot_data = np.zeros((str_data.shape[0], 2))
+    label_data = np.zeros((str_data.shape[0], 2))
+    labels = []
+    for i, row in enumerate(str_data):
+        labels.append(row[0])
+        plot_data[i][0] = norm(float(row[1]), 2) if norm else float(row[1])
+        plot_data[i][1] = norm(float(row[2]), 3, 1) if norm else float(row[2])
+        label_data[i][0] = norm(float(row[1]) * 1.2, 2) if norm else float(row[1])
+        label_data[i][1] = norm(float(row[2]) * 0.9, 3, 1) if norm else float(row[2])
+    return labels, plot_data, label_data
