@@ -1,0 +1,8 @@
+# ================================================================================================
+#  This file contains the calculated data for a simulation  
+#  Every line contains name, orbital period, and semi-major axis of a body 
+# ================================================================================================
+#
+#Name,orbital_period,SMA
+Sun, 6.287555414204113, 2.987619909020928e-06
+Earth, 6.287555414204113, 1.0005089946823418
